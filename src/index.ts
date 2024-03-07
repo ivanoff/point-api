@@ -481,14 +481,14 @@ export class ApiClient {
         return this.delete<CoursesResponseType>(`/courses/${params.Id}`);
     }
 
-    async addSchedulesByCourseCourseId(
+    async addSchedulesForCourseByCourseId(
         params: CoursesParamsType,
         body: SchedulesBodyType
     ): Promise<SchedulesResponseType> {
         return this.post<SchedulesResponseType>(`/courses/${params.CourseId}/schedules`, body);
     }
 
-    async getSchedulesByCoursesCourseId(
+    async getSchedulesForCoursesByCourseId(
         params: CoursesParamsType,
         query: SchedulesQueryType
     ): Promise<ResultType<SchedulesResponseType>> {
@@ -496,7 +496,7 @@ export class ApiClient {
         return this.get<ResultType<SchedulesResponseType>>(
             queryString
                 ? `/courses/${params.CourseId}/schedules?${queryString}`
-                : '/courses/${params.CourseId}/schedules'
+                : `/courses/${params.CourseId}/schedules`
         );
     }
 
@@ -558,14 +558,14 @@ export class ApiClient {
         return this.delete<TeachersResponseType>(`/schedules/teachers/${params.Id}`);
     }
 
-    async addStudentsByScheduleScheduleId(
+    async addStudentsForScheduleByScheduleId(
         params: SchedulesParamsType,
         body: StudentsBodyType
     ): Promise<StudentsResponseType> {
         return this.post<StudentsResponseType>(`/schedules/${params.ScheduleId}/students`, body);
     }
 
-    async getStudentsBySchedulesScheduleId(
+    async getStudentsForSchedulesByScheduleId(
         params: SchedulesParamsType,
         query: StudentsQueryType
     ): Promise<ResultType<StudentsResponseType>> {
@@ -573,7 +573,7 @@ export class ApiClient {
         return this.get<ResultType<StudentsResponseType>>(
             queryString
                 ? `/schedules/${params.ScheduleId}/students?${queryString}`
-                : '/schedules/${params.ScheduleId}/students'
+                : `/schedules/${params.ScheduleId}/students`
         );
     }
 
@@ -878,7 +878,7 @@ export class ApiClient {
         return this.put<UsersResponseType>(`/users/${params.Id}`, body);
     }
 
-    async patchPasswordByUserId(
+    async patchPasswordForUserById(
         params: UsersParamsType,
         body: PasswordBodyType
     ): Promise<PasswordResponseType> {
