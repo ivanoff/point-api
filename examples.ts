@@ -33,9 +33,7 @@ const f = async (name, func) => {
 
 // examples flow
 
-//const client = new ApiClient({ url: 'https://api.dev.point.study' });
-
-const client = new ApiClient({ url: 'http://localhost:7788' });
+const client = new ApiClient({ url: 'https://api.dev.point.study' });
 
 const { id: userId } = await f('Register new user', client.registerNewUser(user));
 
