@@ -8,14 +8,9 @@ const rl = readline.createInterface({
     terminal: false,
 });
 
-// async function question(q): Promise<string> {
-//     return new Promise((resolve) => rl.question(q, resolve));
-// }
-
 const question = async (q): Promise<string> => new Promise((r) => rl.question(q, r));
 
 const user = {
-    // email: '2@ivanoff.org.ua',
     email: 'my.name.is.dimitry@gmail.com',
     login: 'ivanoff',
     password: '1',
