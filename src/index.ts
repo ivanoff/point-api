@@ -24,7 +24,7 @@ export class ApiClient {
         let result;
         for (let i = 1; i < 5; i++) {
             try {
-                result = await fetch(`${this.url}/${endpoint}`, {
+                result = await fetch(`${this.url}/${endpoint.replace(/\/+/, '')}`, {
                     ...options,
                     headers: {
                         ...(options?.headers || {}),
@@ -65,12 +65,12 @@ export class ApiClient {
         return response?.json();
     }
 
-    async post<T>(endpoint: string, data: any, noToken?: boolean): Promise<T> {
+    async post<T>(endpoint: string, data?: any, noToken?: boolean): Promise<T> {
         const response = await this.fetchWithToken(
             endpoint,
             {
                 method: 'POST',
-                body: JSON.stringify(data),
+                body: JSON.stringify(data || {}),
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -80,10 +80,10 @@ export class ApiClient {
         return response?.json();
     }
 
-    async put<T>(endpoint: string, data: any): Promise<T> {
+    async put<T>(endpoint: string, data?: any): Promise<T> {
         const response = await this.fetchWithToken(endpoint, {
             method: 'PUT',
-            body: JSON.stringify(data),
+            body: JSON.stringify(data || {}),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -91,10 +91,10 @@ export class ApiClient {
         return response?.json();
     }
 
-    async patch<T>(endpoint: string, data: any): Promise<T> {
+    async patch<T>(endpoint: string, data?: any): Promise<T> {
         const response = await this.fetchWithToken(endpoint, {
             method: 'PATCH',
-            body: JSON.stringify(data),
+            body: JSON.stringify(data || {}),
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -135,7 +135,7 @@ export class ApiClient {
     handleQueryString(query: any) {
         const params = new URLSearchParams();
 
-        for (const key of Object.keys(params) as (keyof UserType)[]) {
+        for (const key of Object.keys(query) as (keyof UserType)[]) {
             if (query[`${key}`]) {
                 params.append(key, query[`${key}`]?.toString() || '');
             }
@@ -197,6 +197,13 @@ export class ApiClient {
 
     async changePassword(body: LoginBodyType): Promise<LoginResponseType> {
         return this.patch<LoginResponseType>('/login', body);
+    }
+
+    async getRefreshInLogin(query: RefreshQueryType): Promise<ResultType<RefreshResponseType>> {
+        const queryString = this.handleQueryString(query);
+        return this.get<ResultType<RefreshResponseType>>(
+            queryString ? `/login/refresh?${queryString}` : '/login/refresh'
+        );
     }
 
     async forgotPasssword(body: ForgotBodyType): Promise<ForgotResponseType> {
@@ -937,14 +944,14 @@ export class ApiClient {
         return this.post<LinkedinResponseType>('/login/linkedin', body);
     }
 
-    async getLFacebookUrl(query: FacebookQueryType): Promise<ResultType<FacebookResponseType>> {
+    async getFacebookUrl(query: FacebookQueryType): Promise<ResultType<FacebookResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<FacebookResponseType>>(
             queryString ? `/login/facebook?${queryString}` : '/login/facebook'
         );
     }
 
-    async postLFacebookData(body: FacebookBodyType): Promise<FacebookResponseType> {
+    async postFacebookData(body: FacebookBodyType): Promise<FacebookResponseType> {
         return this.post<FacebookResponseType>('/login/facebook', body);
     }
 
@@ -960,8 +967,8 @@ export type ConstructorType = {
     url: string;
     token?: string;
     refreshToken?: string;
-    onTokenUpdate: any;
-    onTokenError: any;
+    onTokenUpdate?: any;
+    onTokenError?: any;
 };
 
 export type ResultType<T> = {
@@ -1047,11 +1054,13 @@ export type LoginParamsType = {
 export type CheckQueryType = any;
 
 export type CheckResponseType = {
+    email?: string | number | boolean;
     login?: string | number | boolean;
     code?: string | number | boolean;
 };
 
 export type CheckBodyType = {
+    email?: string | number | boolean;
     login?: string | number | boolean;
     code?: string | number | boolean;
 };
@@ -1943,20 +1952,16 @@ export type UsersQueryType = {
     firstName?: string;
     secondName?: string;
     options?: object;
-    externalProfiles?: object;
     timeCreated?: string;
     timeUpdated?: string;
     statuses?: (string | number)[];
     isUnsubscribed?: boolean;
-    emailToChange?: string;
     _null_firstName?: string;
     _not_null_firstName?: string;
     _null_secondName?: string;
     _not_null_secondName?: string;
     _null_options?: string;
     _not_null_options?: string;
-    _null_externalProfiles?: string;
-    _not_null_externalProfiles?: string;
     _null_timeCreated?: string;
     _not_null_timeCreated?: string;
     _null_timeUpdated?: string;
@@ -1965,8 +1970,6 @@ export type UsersQueryType = {
     _not_null_statuses?: string;
     _null_isUnsubscribed?: string;
     _not_null_isUnsubscribed?: string;
-    _null_emailToChange?: string;
-    _not_null_emailToChange?: string;
     _from_id?: number;
     _to_id?: number;
     _from_login?: string;
@@ -1977,16 +1980,12 @@ export type UsersQueryType = {
     _to_secondName?: string;
     _from_options?: object;
     _to_options?: object;
-    _from_externalProfiles?: object;
-    _to_externalProfiles?: object;
     _from_timeCreated?: string;
     _to_timeCreated?: string;
     _from_timeUpdated?: string;
     _to_timeUpdated?: string;
     _from_statuses?: (string | number)[];
     _to_statuses?: (string | number)[];
-    _from_emailToChange?: string;
-    _to_emailToChange?: string;
     _fields?: string;
     _sort?: string;
     _join?: string;
@@ -2002,11 +2001,9 @@ export type UsersResponseType = {
     firstName?: string;
     secondName?: string;
     options?: object;
-    externalProfiles?: object;
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-    emailToChange?: string;
 };
 
 export type UsersBodyType = {
@@ -2014,11 +2011,9 @@ export type UsersBodyType = {
     firstName?: string;
     secondName?: string;
     options?: object;
-    externalProfiles?: object;
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-    emailToChange?: string;
 };
 
 export type GoogleQueryType = any;
