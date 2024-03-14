@@ -52,8 +52,8 @@ export class ApiClient {
     ): Promise<Response | undefined> {
         let response = await this.request(endpoint, options, noToken);
 
-        if (!noToken && response?.status === 403) {
-            const a = await this.handle403();
+        if (!noToken && response?.status === 401) {
+            const a = await this.handle401();
             if (a) response = await this.request(endpoint, options, noToken);
         }
 
@@ -109,7 +109,7 @@ export class ApiClient {
         return response?.json();
     }
 
-    private async handle403(): Promise<boolean> {
+    private async handle401(): Promise<boolean> {
         const response = await this.request(
             'login',
             {
@@ -171,34 +171,62 @@ export class ApiClient {
         );
     }
 
-    async registerNewUser(body: RegisterBodyType): Promise<RegisterResponseType> {
+    /***
+     * Register new user
+     */
+    async registerNewUser(body: RegisterPostBodyType): Promise<RegisterResponseType> {
         return this.post<RegisterResponseType>('/register', body);
     }
 
-    async getAccessToken(body: LoginBodyType): Promise<LoginResponseType> {
+    /***
+     * Get jwt token
+     */
+    async getAccessToken(body: LoginPostBodyType): Promise<LoginResponseType> {
         return this.post<LoginResponseType>('/login', body);
     }
 
-    async loginByService(params: LoginParamsType, body: LoginBodyType): Promise<LoginResponseType> {
-        return this.post<LoginResponseType>(`/login/${params.Service}`, body);
+    async loginByService(
+        params: LoginParamsType,
+        body: LoginPostBodyType
+    ): Promise<LoginResponseType> {
+        return this.post<LoginResponseType>(`/login/${params.service}`, body);
     }
 
-    async checkRegisteredEmail(body: CheckBodyType): Promise<CheckResponseType> {
+    /***
+     * Check
+     */
+    async checkRegisteredEmail(body: CheckPostBodyType): Promise<CheckResponseType> {
         return this.post<CheckResponseType>('/register/check', body);
     }
 
-    async refreshAccessToken(body: RefreshBodyType): Promise<RefreshResponseType> {
+    /***
+     * Refresh jwt token
+     */
+    async refreshAccessToken(body: RefreshPostBodyType): Promise<RefreshResponseType> {
         return this.post<RefreshResponseType>('/login/refresh', body);
     }
 
-    async logout(body: LogoutBodyType): Promise<LogoutResponseType> {
+    async logout(body: LogoutPostBodyType): Promise<LogoutResponseType> {
         return this.post<LogoutResponseType>('/logout', body);
     }
 
+    /***
+     * Re-send e-mail with confirmation code
+     */
+    async addResendInRegister(body: ResendPostBodyType): Promise<ResendResponseType> {
+        return this.post<ResendResponseType>('/register/resend', body);
+    }
+
+    /***
+     * Update user
+     */
     async changePassword(body: LoginBodyType): Promise<LoginResponseType> {
         return this.patch<LoginResponseType>('/login', body);
     }
 
+    /***
+     * Refresh jwt token
+     */
     async getRefreshInLogin(query: RefreshQueryType): Promise<ResultType<RefreshResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<RefreshResponseType>>(
@@ -206,18 +234,30 @@ export class ApiClient {
         );
     }
 
-    async forgotPasssword(body: ForgotBodyType): Promise<ForgotResponseType> {
+    /***
+     * Get token to restore password
+     */
+    async forgotPasssword(body: ForgotPostBodyType): Promise<ForgotResponseType> {
         return this.post<ForgotResponseType>('/login/forgot', body);
     }
 
-    async setForgotPasssword(body: RestoreBodyType): Promise<RestoreResponseType> {
+    /***
+     * Set new password by restore code
+     */
+    async setForgotPasssword(body: RestorePostBodyType): Promise<RestoreResponseType> {
         return this.post<RestoreResponseType>('/login/restore', body);
     }
 
-    async changeEmail(body: EmailBodyType): Promise<EmailResponseType> {
+    /***
+     * Set new email by restore code
+     */
+    async changeEmail(body: EmailPostBodyType): Promise<EmailResponseType> {
         return this.post<EmailResponseType>('/login/email', body);
     }
 
+    /***
+     * Get list of user's external services
+     */
     async getExternalsLogin(query: ExternalsQueryType): Promise<ResultType<ExternalsResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<ExternalsResponseType>>(
@@ -225,40 +265,61 @@ export class ApiClient {
         );
     }
 
+    /***
+     * Remove external service from user's profile
+     */
     async deleteExternalsByExternalName(params: LoginParamsType): Promise<ExternalsResponseType> {
-        return this.delete<ExternalsResponseType>(`/login/externals/${params.ExternalName}`);
+        return this.delete<ExternalsResponseType>(`/login/externals/${params.externalName}`);
     }
 
+    /***
+     * Create status
+     */
     async updateUserStatusByUserId(
         params: UsersParamsType,
-        body: StatusesBodyType
+        body: StatusesPostBodyType
     ): Promise<StatusesResponseType> {
         return this.post<StatusesResponseType>(
-            `/users/${params.UserId}/statuses/${params.StatusName}`,
+            `/users/${params.userId}/statuses/${params.statusName}`,
             body
         );
     }
 
+    /***
+     * Delete status
+     */
     async deleteUserStatusByUserId(params: UsersParamsType): Promise<StatusesResponseType> {
         return this.delete<StatusesResponseType>(
-            `/users/${params.UserId}/statuses/${params.StatusName}`
+            `/users/${params.userId}/statuses/${params.statusName}`
         );
     }
 
+    /***
+     * Get user token by superadmin
+     */
     async loginAsUserByAdmin(
         params: SuperadminParamsType
     ): Promise<ResultType<TokensResponseType>> {
-        return this.get<ResultType<TokensResponseType>>(`/superadmin/tokens/${params.UserId}`);
+        return this.get<ResultType<TokensResponseType>>(`/superadmin/tokens/${params.userId}`);
     }
 
+    /***
+     * Get back superadmin token
+     */
     async logoutAsUserByAdmin(): Promise<TokensResponseType> {
         return this.delete<TokensResponseType>('/superadmin/tokens');
     }
 
-    async addSubscribeInEmails(body: SubscribeBodyType): Promise<SubscribeResponseType> {
+    /***
+     * Allow the user to receive all emails
+     */
+    async addSubscribeInEmails(body: SubscribePostBodyType): Promise<SubscribeResponseType> {
         return this.post<SubscribeResponseType>('/emails/subscribe', body);
     }
 
+    /***
+     * Unsubscribe the user from receiving incoming emails, except for the restore password email
+     */
     async deleteSubscribeInEmails(): Promise<SubscribeResponseType> {
         return this.delete<SubscribeResponseType>('/emails/subscribe');
     }
@@ -270,27 +331,27 @@ export class ApiClient {
         );
     }
 
-    async addImage(body: ImagesBodyType): Promise<ImagesResponseType> {
+    async addImage(body: ImagesPostBodyType): Promise<ImagesResponseType> {
         return this.post<ImagesResponseType>('/images', body);
     }
 
     async getImagesById(params: ImagesParamsType): Promise<ResultType<ImagesResponseType>> {
-        return this.get<ResultType<ImagesResponseType>>(`/images/${params.Id}`);
+        return this.get<ResultType<ImagesResponseType>>(`/images/${params.id}`);
     }
 
     async deleteImageById(params: ImagesParamsType): Promise<ImagesResponseType> {
-        return this.delete<ImagesResponseType>(`/images/${params.Id}`);
+        return this.delete<ImagesResponseType>(`/images/${params.id}`);
     }
 
     async deleteImagesByIdInNewsByNewsId(params: NewsParamsType): Promise<ImagesResponseType> {
-        return this.delete<ImagesResponseType>(`/news/${params.NewsId}/images/${params.Id}`);
+        return this.delete<ImagesResponseType>(`/news/${params.newsId}/images/${params.id}`);
     }
 
     async addImagesByIdInNewsByNewsId(
         params: NewsParamsType,
-        body: ImagesBodyType
+        body: ImagesPostBodyType
     ): Promise<ImagesResponseType> {
-        return this.post<ImagesResponseType>(`/news/${params.NewsId}/images/${params.Id}`, body);
+        return this.post<ImagesResponseType>(`/news/${params.newsId}/images/${params.id}`, body);
     }
 
     async getNews(query: NewsQueryType): Promise<ResultType<NewsResponseType>> {
@@ -300,23 +361,23 @@ export class ApiClient {
         );
     }
 
-    async addNew(body: NewsBodyType): Promise<NewsResponseType> {
+    async addNew(body: NewsPostBodyType): Promise<NewsResponseType> {
         return this.post<NewsResponseType>('/news', body);
     }
 
     async getNewsById(params: NewsParamsType): Promise<ResultType<NewsResponseType>> {
-        return this.get<ResultType<NewsResponseType>>(`/news/${params.Id}`);
+        return this.get<ResultType<NewsResponseType>>(`/news/${params.id}`);
     }
 
     async updateNewById(params: NewsParamsType, body: NewsBodyType): Promise<NewsResponseType> {
-        return this.put<NewsResponseType>(`/news/${params.Id}`, body);
+        return this.put<NewsResponseType>(`/news/${params.id}`, body);
     }
 
     async deleteNewById(params: NewsParamsType): Promise<NewsResponseType> {
-        return this.delete<NewsResponseType>(`/news/${params.Id}`);
+        return this.delete<NewsResponseType>(`/news/${params.id}`);
     }
 
-    async addKeyPointsInTopics(body: KeyPointsBodyType): Promise<KeyPointsResponseType> {
+    async addKeyPointsInTopics(body: KeyPointsPostBodyType): Promise<KeyPointsResponseType> {
         return this.post<KeyPointsResponseType>('/topics/key_points', body);
     }
 
@@ -332,21 +393,23 @@ export class ApiClient {
     async getKeyPointsByIdInTopics(
         params: TopicsParamsType
     ): Promise<ResultType<KeyPointsResponseType>> {
-        return this.get<ResultType<KeyPointsResponseType>>(`/topics/keyPoints/${params.Id}`);
+        return this.get<ResultType<KeyPointsResponseType>>(`/topics/keyPoints/${params.id}`);
     }
 
     async updateKeyPointsByIdInTopics(
         params: TopicsParamsType,
         body: KeyPointsBodyType
     ): Promise<KeyPointsResponseType> {
-        return this.put<KeyPointsResponseType>(`/topics/keyPoints/${params.Id}`, body);
+        return this.put<KeyPointsResponseType>(`/topics/keyPoints/${params.id}`, body);
     }
 
     async deleteKeyPointsByIdInTopics(params: TopicsParamsType): Promise<KeyPointsResponseType> {
-        return this.delete<KeyPointsResponseType>(`/topics/keyPoints/${params.Id}`);
+        return this.delete<KeyPointsResponseType>(`/topics/keyPoints/${params.id}`);
     }
 
-    async addUserStatusesInTopics(body: UserStatusesBodyType): Promise<UserStatusesResponseType> {
+    async addUserStatusesInTopics(
+        body: UserStatusesPostBodyType
+    ): Promise<UserStatusesResponseType> {
         return this.post<UserStatusesResponseType>('/topics/user_statuses', body);
     }
 
@@ -362,23 +425,23 @@ export class ApiClient {
     async getUserStatusesByIdInTopics(
         params: TopicsParamsType
     ): Promise<ResultType<UserStatusesResponseType>> {
-        return this.get<ResultType<UserStatusesResponseType>>(`/topics/userStatuses/${params.Id}`);
+        return this.get<ResultType<UserStatusesResponseType>>(`/topics/userStatuses/${params.id}`);
     }
 
     async updateUserStatusesByIdInTopics(
         params: TopicsParamsType,
         body: UserStatusesBodyType
     ): Promise<UserStatusesResponseType> {
-        return this.put<UserStatusesResponseType>(`/topics/userStatuses/${params.Id}`, body);
+        return this.put<UserStatusesResponseType>(`/topics/userStatuses/${params.id}`, body);
     }
 
     async deleteUserStatusesByIdInTopics(
         params: TopicsParamsType
     ): Promise<UserStatusesResponseType> {
-        return this.delete<UserStatusesResponseType>(`/topics/userStatuses/${params.Id}`);
+        return this.delete<UserStatusesResponseType>(`/topics/userStatuses/${params.id}`);
     }
 
-    async addTopic(body: TopicsBodyType): Promise<TopicsResponseType> {
+    async addTopic(body: TopicsPostBodyType): Promise<TopicsResponseType> {
         return this.post<TopicsResponseType>('/topics', body);
     }
 
@@ -386,7 +449,7 @@ export class ApiClient {
         params: TopicsParamsType,
         body: TopicsBodyType
     ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/topics/${params.Id}`, body);
+        return this.put<TopicsResponseType>(`/topics/${params.id}`, body);
     }
 
     async getTopics(query: TopicsQueryType): Promise<ResultType<TopicsResponseType>> {
@@ -397,14 +460,14 @@ export class ApiClient {
     }
 
     async getTopicsById(params: TopicsParamsType): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/topics/${params.Id}`);
+        return this.get<ResultType<TopicsResponseType>>(`/topics/${params.id}`);
     }
 
     async deleteTopicById(params: TopicsParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/topics/${params.Id}`);
+        return this.delete<TopicsResponseType>(`/topics/${params.id}`);
     }
 
-    async addTeachersInCourses(body: TeachersBodyType): Promise<TeachersResponseType> {
+    async addTeachersInCourses(body: TeachersPostBodyType): Promise<TeachersResponseType> {
         return this.post<TeachersResponseType>('/courses/teachers', body);
     }
 
@@ -420,21 +483,21 @@ export class ApiClient {
     async getTeachersByIdInCourses(
         params: CoursesParamsType
     ): Promise<ResultType<TeachersResponseType>> {
-        return this.get<ResultType<TeachersResponseType>>(`/courses/teachers/${params.Id}`);
+        return this.get<ResultType<TeachersResponseType>>(`/courses/teachers/${params.id}`);
     }
 
     async updateTeachersByIdInCourses(
         params: CoursesParamsType,
         body: TeachersBodyType
     ): Promise<TeachersResponseType> {
-        return this.put<TeachersResponseType>(`/courses/teachers/${params.Id}`, body);
+        return this.put<TeachersResponseType>(`/courses/teachers/${params.id}`, body);
     }
 
     async deleteTeachersByIdInCourses(params: CoursesParamsType): Promise<TeachersResponseType> {
-        return this.delete<TeachersResponseType>(`/courses/teachers/${params.Id}`);
+        return this.delete<TeachersResponseType>(`/courses/teachers/${params.id}`);
     }
 
-    async addTopicsInCourses(body: TopicsBodyType): Promise<TopicsResponseType> {
+    async addTopicsInCourses(body: TopicsPostBodyType): Promise<TopicsResponseType> {
         return this.post<TopicsResponseType>('/courses/topics', body);
     }
 
@@ -448,21 +511,21 @@ export class ApiClient {
     async getTopicsByIdInCourses(
         params: CoursesParamsType
     ): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/courses/topics/${params.Id}`);
+        return this.get<ResultType<TopicsResponseType>>(`/courses/topics/${params.id}`);
     }
 
     async updateTopicsByIdInCourses(
         params: CoursesParamsType,
         body: TopicsBodyType
     ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/courses/topics/${params.Id}`, body);
+        return this.put<TopicsResponseType>(`/courses/topics/${params.id}`, body);
     }
 
     async deleteTopicsByIdInCourses(params: CoursesParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/courses/topics/${params.Id}`);
+        return this.delete<TopicsResponseType>(`/courses/topics/${params.id}`);
     }
 
-    async addCourse(body: CoursesBodyType): Promise<CoursesResponseType> {
+    async addCourse(body: CoursesPostBodyType): Promise<CoursesResponseType> {
         return this.post<CoursesResponseType>('/courses', body);
     }
 
@@ -474,25 +537,25 @@ export class ApiClient {
     }
 
     async getCoursesById(params: CoursesParamsType): Promise<ResultType<CoursesResponseType>> {
-        return this.get<ResultType<CoursesResponseType>>(`/courses/${params.Id}`);
+        return this.get<ResultType<CoursesResponseType>>(`/courses/${params.id}`);
     }
 
     async updateCourseById(
         params: CoursesParamsType,
         body: CoursesBodyType
     ): Promise<CoursesResponseType> {
-        return this.put<CoursesResponseType>(`/courses/${params.Id}`, body);
+        return this.put<CoursesResponseType>(`/courses/${params.id}`, body);
     }
 
     async deleteCourseById(params: CoursesParamsType): Promise<CoursesResponseType> {
-        return this.delete<CoursesResponseType>(`/courses/${params.Id}`);
+        return this.delete<CoursesResponseType>(`/courses/${params.id}`);
     }
 
     async addSchedulesForCourseByCourseId(
         params: CoursesParamsType,
-        body: SchedulesBodyType
+        body: SchedulesPostBodyType
     ): Promise<SchedulesResponseType> {
-        return this.post<SchedulesResponseType>(`/courses/${params.CourseId}/schedules`, body);
+        return this.post<SchedulesResponseType>(`/courses/${params.courseId}/schedules`, body);
     }
 
     async getSchedulesForCoursesByCourseId(
@@ -502,8 +565,8 @@ export class ApiClient {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<SchedulesResponseType>>(
             queryString
-                ? `/courses/${params.CourseId}/schedules?${queryString}`
-                : `/courses/${params.CourseId}/schedules`
+                ? `/courses/${params.courseId}/schedules?${queryString}`
+                : `/courses/${params.courseId}/schedules`
         );
     }
 
@@ -511,7 +574,7 @@ export class ApiClient {
         params: CoursesParamsType
     ): Promise<ResultType<SchedulesResponseType>> {
         return this.get<ResultType<SchedulesResponseType>>(
-            `/courses/${params.CourseId}/schedules/${params.Id}`
+            `/courses/${params.courseId}/schedules/${params.id}`
         );
     }
 
@@ -520,7 +583,7 @@ export class ApiClient {
         body: SchedulesBodyType
     ): Promise<SchedulesResponseType> {
         return this.put<SchedulesResponseType>(
-            `/courses/${params.CourseId}/schedules/${params.Id}`,
+            `/courses/${params.courseId}/schedules/${params.id}`,
             body
         );
     }
@@ -529,11 +592,11 @@ export class ApiClient {
         params: CoursesParamsType
     ): Promise<SchedulesResponseType> {
         return this.delete<SchedulesResponseType>(
-            `/courses/${params.CourseId}/schedules/${params.Id}`
+            `/courses/${params.courseId}/schedules/${params.id}`
         );
     }
 
-    async addTeachersInSchedules(body: TeachersBodyType): Promise<TeachersResponseType> {
+    async addTeachersInSchedules(body: TeachersPostBodyType): Promise<TeachersResponseType> {
         return this.post<TeachersResponseType>('/schedules/teachers', body);
     }
 
@@ -549,27 +612,27 @@ export class ApiClient {
     async getTeachersByIdInSchedules(
         params: SchedulesParamsType
     ): Promise<ResultType<TeachersResponseType>> {
-        return this.get<ResultType<TeachersResponseType>>(`/schedules/teachers/${params.Id}`);
+        return this.get<ResultType<TeachersResponseType>>(`/schedules/teachers/${params.id}`);
     }
 
     async updateTeachersByIdInSchedules(
         params: SchedulesParamsType,
         body: TeachersBodyType
     ): Promise<TeachersResponseType> {
-        return this.put<TeachersResponseType>(`/schedules/teachers/${params.Id}`, body);
+        return this.put<TeachersResponseType>(`/schedules/teachers/${params.id}`, body);
     }
 
     async deleteTeachersByIdInSchedules(
         params: SchedulesParamsType
     ): Promise<TeachersResponseType> {
-        return this.delete<TeachersResponseType>(`/schedules/teachers/${params.Id}`);
+        return this.delete<TeachersResponseType>(`/schedules/teachers/${params.id}`);
     }
 
     async addStudentsForScheduleByScheduleId(
         params: SchedulesParamsType,
-        body: StudentsBodyType
+        body: StudentsPostBodyType
     ): Promise<StudentsResponseType> {
-        return this.post<StudentsResponseType>(`/schedules/${params.ScheduleId}/students`, body);
+        return this.post<StudentsResponseType>(`/schedules/${params.scheduleId}/students`, body);
     }
 
     async getStudentsForSchedulesByScheduleId(
@@ -579,8 +642,8 @@ export class ApiClient {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<StudentsResponseType>>(
             queryString
-                ? `/schedules/${params.ScheduleId}/students?${queryString}`
-                : `/schedules/${params.ScheduleId}/students`
+                ? `/schedules/${params.scheduleId}/students?${queryString}`
+                : `/schedules/${params.scheduleId}/students`
         );
     }
 
@@ -588,7 +651,7 @@ export class ApiClient {
         params: SchedulesParamsType
     ): Promise<ResultType<StudentsResponseType>> {
         return this.get<ResultType<StudentsResponseType>>(
-            `/schedules/${params.ScheduleId}/students/${params.Id}`
+            `/schedules/${params.scheduleId}/students/${params.id}`
         );
     }
 
@@ -597,7 +660,7 @@ export class ApiClient {
         body: StudentsBodyType
     ): Promise<StudentsResponseType> {
         return this.put<StudentsResponseType>(
-            `/schedules/${params.ScheduleId}/students/${params.Id}`,
+            `/schedules/${params.scheduleId}/students/${params.id}`,
             body
         );
     }
@@ -606,11 +669,11 @@ export class ApiClient {
         params: SchedulesParamsType
     ): Promise<StudentsResponseType> {
         return this.delete<StudentsResponseType>(
-            `/schedules/${params.ScheduleId}/students/${params.Id}`
+            `/schedules/${params.scheduleId}/students/${params.id}`
         );
     }
 
-    async addSchedule(body: SchedulesBodyType): Promise<SchedulesResponseType> {
+    async addSchedule(body: SchedulesPostBodyType): Promise<SchedulesResponseType> {
         return this.post<SchedulesResponseType>('/schedules', body);
     }
 
@@ -624,21 +687,21 @@ export class ApiClient {
     async getSchedulesById(
         params: SchedulesParamsType
     ): Promise<ResultType<SchedulesResponseType>> {
-        return this.get<ResultType<SchedulesResponseType>>(`/schedules/${params.Id}`);
+        return this.get<ResultType<SchedulesResponseType>>(`/schedules/${params.id}`);
     }
 
     async updateScheduleById(
         params: SchedulesParamsType,
         body: SchedulesBodyType
     ): Promise<SchedulesResponseType> {
-        return this.put<SchedulesResponseType>(`/schedules/${params.Id}`, body);
+        return this.put<SchedulesResponseType>(`/schedules/${params.id}`, body);
     }
 
     async deleteScheduleById(params: SchedulesParamsType): Promise<SchedulesResponseType> {
-        return this.delete<SchedulesResponseType>(`/schedules/${params.Id}`);
+        return this.delete<SchedulesResponseType>(`/schedules/${params.id}`);
     }
 
-    async addSharesInGoals(body: SharesBodyType): Promise<SharesResponseType> {
+    async addSharesInGoals(body: SharesPostBodyType): Promise<SharesResponseType> {
         return this.post<SharesResponseType>('/goals/shares', body);
     }
 
@@ -650,21 +713,21 @@ export class ApiClient {
     }
 
     async getSharesByIdInGoals(params: GoalsParamsType): Promise<ResultType<SharesResponseType>> {
-        return this.get<ResultType<SharesResponseType>>(`/goals/shares/${params.Id}`);
+        return this.get<ResultType<SharesResponseType>>(`/goals/shares/${params.id}`);
     }
 
     async updateSharesByIdInGoals(
         params: GoalsParamsType,
         body: SharesBodyType
     ): Promise<SharesResponseType> {
-        return this.put<SharesResponseType>(`/goals/shares/${params.Id}`, body);
+        return this.put<SharesResponseType>(`/goals/shares/${params.id}`, body);
     }
 
     async deleteSharesByIdInGoals(params: GoalsParamsType): Promise<SharesResponseType> {
-        return this.delete<SharesResponseType>(`/goals/shares/${params.Id}`);
+        return this.delete<SharesResponseType>(`/goals/shares/${params.id}`);
     }
 
-    async addTopicsInGoals(body: TopicsBodyType): Promise<TopicsResponseType> {
+    async addTopicsInGoals(body: TopicsPostBodyType): Promise<TopicsResponseType> {
         return this.post<TopicsResponseType>('/goals/topics', body);
     }
 
@@ -676,21 +739,21 @@ export class ApiClient {
     }
 
     async getTopicsByIdInGoals(params: GoalsParamsType): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/goals/topics/${params.Id}`);
+        return this.get<ResultType<TopicsResponseType>>(`/goals/topics/${params.id}`);
     }
 
     async updateTopicsByIdInGoals(
         params: GoalsParamsType,
         body: TopicsBodyType
     ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/goals/topics/${params.Id}`, body);
+        return this.put<TopicsResponseType>(`/goals/topics/${params.id}`, body);
     }
 
     async deleteTopicsByIdInGoals(params: GoalsParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/goals/topics/${params.Id}`);
+        return this.delete<TopicsResponseType>(`/goals/topics/${params.id}`);
     }
 
-    async addGoal(body: GoalsBodyType): Promise<GoalsResponseType> {
+    async addGoal(body: GoalsPostBodyType): Promise<GoalsResponseType> {
         return this.post<GoalsResponseType>('/goals', body);
     }
 
@@ -702,18 +765,18 @@ export class ApiClient {
     }
 
     async getGoalsById(params: GoalsParamsType): Promise<ResultType<GoalsResponseType>> {
-        return this.get<ResultType<GoalsResponseType>>(`/goals/${params.Id}`);
+        return this.get<ResultType<GoalsResponseType>>(`/goals/${params.id}`);
     }
 
     async updateGoalById(params: GoalsParamsType, body: GoalsBodyType): Promise<GoalsResponseType> {
-        return this.put<GoalsResponseType>(`/goals/${params.Id}`, body);
+        return this.put<GoalsResponseType>(`/goals/${params.id}`, body);
     }
 
     async deleteGoalById(params: GoalsParamsType): Promise<GoalsResponseType> {
-        return this.delete<GoalsResponseType>(`/goals/${params.Id}`);
+        return this.delete<GoalsResponseType>(`/goals/${params.id}`);
     }
 
-    async addTopicsInCategories(body: TopicsBodyType): Promise<TopicsResponseType> {
+    async addTopicsInCategories(body: TopicsPostBodyType): Promise<TopicsResponseType> {
         return this.post<TopicsResponseType>('/categories/topics', body);
     }
 
@@ -727,21 +790,21 @@ export class ApiClient {
     async getTopicsByIdInCategories(
         params: CategoriesParamsType
     ): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/categories/topics/${params.Id}`);
+        return this.get<ResultType<TopicsResponseType>>(`/categories/topics/${params.id}`);
     }
 
     async updateTopicsByIdInCategories(
         params: CategoriesParamsType,
         body: TopicsBodyType
     ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/categories/topics/${params.Id}`, body);
+        return this.put<TopicsResponseType>(`/categories/topics/${params.id}`, body);
     }
 
     async deleteTopicsByIdInCategories(params: CategoriesParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/categories/topics/${params.Id}`);
+        return this.delete<TopicsResponseType>(`/categories/topics/${params.id}`);
     }
 
-    async addCategorie(body: CategoriesBodyType): Promise<CategoriesResponseType> {
+    async addCategorie(body: CategoriesPostBodyType): Promise<CategoriesResponseType> {
         return this.post<CategoriesResponseType>('/categories', body);
     }
 
@@ -755,18 +818,18 @@ export class ApiClient {
     async getCategoriesById(
         params: CategoriesParamsType
     ): Promise<ResultType<CategoriesResponseType>> {
-        return this.get<ResultType<CategoriesResponseType>>(`/categories/${params.Id}`);
+        return this.get<ResultType<CategoriesResponseType>>(`/categories/${params.id}`);
     }
 
     async updateCategorieById(
         params: CategoriesParamsType,
         body: CategoriesBodyType
     ): Promise<CategoriesResponseType> {
-        return this.put<CategoriesResponseType>(`/categories/${params.Id}`, body);
+        return this.put<CategoriesResponseType>(`/categories/${params.id}`, body);
     }
 
     async deleteCategorieById(params: CategoriesParamsType): Promise<CategoriesResponseType> {
-        return this.delete<CategoriesResponseType>(`/categories/${params.Id}`);
+        return this.delete<CategoriesResponseType>(`/categories/${params.id}`);
     }
 
     async getTree(query: TreeQueryType): Promise<ResultType<TreeResponseType>> {
@@ -777,14 +840,14 @@ export class ApiClient {
     }
 
     async getTreeByAssetId(params: TreeParamsType): Promise<ResultType<TreeResponseType>> {
-        return this.get<ResultType<TreeResponseType>>(`/tree/${params.AssetId}`);
+        return this.get<ResultType<TreeResponseType>>(`/tree/${params.assetId}`);
     }
 
     async getTree2ByAssetId(params: Tree2ParamsType): Promise<ResultType<Tree2ResponseType>> {
-        return this.get<ResultType<Tree2ResponseType>>(`/tree2/${params.AssetId}`);
+        return this.get<ResultType<Tree2ResponseType>>(`/tree2/${params.assetId}`);
     }
 
-    async addLanguageCode(body: LanguageCodesBodyType): Promise<LanguageCodesResponseType> {
+    async addLanguageCode(body: LanguageCodesPostBodyType): Promise<LanguageCodesResponseType> {
         return this.post<LanguageCodesResponseType>('/language_codes', body);
     }
 
@@ -800,23 +863,23 @@ export class ApiClient {
     async getLanguageCodesById(
         params: LanguageCodesParamsType
     ): Promise<ResultType<LanguageCodesResponseType>> {
-        return this.get<ResultType<LanguageCodesResponseType>>(`/languageCodes/${params.Id}`);
+        return this.get<ResultType<LanguageCodesResponseType>>(`/languageCodes/${params.id}`);
     }
 
     async updateLanguageCodeById(
         params: LanguageCodesParamsType,
         body: LanguageCodesBodyType
     ): Promise<LanguageCodesResponseType> {
-        return this.put<LanguageCodesResponseType>(`/languageCodes/${params.Id}`, body);
+        return this.put<LanguageCodesResponseType>(`/languageCodes/${params.id}`, body);
     }
 
     async deleteLanguageCodeById(
         params: LanguageCodesParamsType
     ): Promise<LanguageCodesResponseType> {
-        return this.delete<LanguageCodesResponseType>(`/languageCodes/${params.Id}`);
+        return this.delete<LanguageCodesResponseType>(`/languageCodes/${params.id}`);
     }
 
-    async addLearnStatuse(body: LearnStatusesBodyType): Promise<LearnStatusesResponseType> {
+    async addLearnStatuse(body: LearnStatusesPostBodyType): Promise<LearnStatusesResponseType> {
         return this.post<LearnStatusesResponseType>('/learn_statuses', body);
     }
 
@@ -832,23 +895,23 @@ export class ApiClient {
     async getLearnStatusesById(
         params: LearnStatusesParamsType
     ): Promise<ResultType<LearnStatusesResponseType>> {
-        return this.get<ResultType<LearnStatusesResponseType>>(`/learnStatuses/${params.Id}`);
+        return this.get<ResultType<LearnStatusesResponseType>>(`/learnStatuses/${params.id}`);
     }
 
     async updateLearnStatuseById(
         params: LearnStatusesParamsType,
         body: LearnStatusesBodyType
     ): Promise<LearnStatusesResponseType> {
-        return this.put<LearnStatusesResponseType>(`/learnStatuses/${params.Id}`, body);
+        return this.put<LearnStatusesResponseType>(`/learnStatuses/${params.id}`, body);
     }
 
     async deleteLearnStatuseById(
         params: LearnStatusesParamsType
     ): Promise<LearnStatusesResponseType> {
-        return this.delete<LearnStatusesResponseType>(`/learnStatuses/${params.Id}`);
+        return this.delete<LearnStatusesResponseType>(`/learnStatuses/${params.id}`);
     }
 
-    async addRegion(body: RegionsBodyType): Promise<RegionsResponseType> {
+    async addRegion(body: RegionsPostBodyType): Promise<RegionsResponseType> {
         return this.post<RegionsResponseType>('/regions', body);
     }
 
@@ -860,18 +923,18 @@ export class ApiClient {
     }
 
     async getRegionsById(params: RegionsParamsType): Promise<ResultType<RegionsResponseType>> {
-        return this.get<ResultType<RegionsResponseType>>(`/regions/${params.Id}`);
+        return this.get<ResultType<RegionsResponseType>>(`/regions/${params.id}`);
     }
 
     async updateRegionById(
         params: RegionsParamsType,
         body: RegionsBodyType
     ): Promise<RegionsResponseType> {
-        return this.put<RegionsResponseType>(`/regions/${params.Id}`, body);
+        return this.put<RegionsResponseType>(`/regions/${params.id}`, body);
     }
 
     async deleteRegionById(params: RegionsParamsType): Promise<RegionsResponseType> {
-        return this.delete<RegionsResponseType>(`/regions/${params.Id}`);
+        return this.delete<RegionsResponseType>(`/regions/${params.id}`);
     }
 
     async getMeInUsers(query: MeQueryType): Promise<ResultType<MeResponseType>> {
@@ -882,21 +945,24 @@ export class ApiClient {
     }
 
     async updateUserById(params: UsersParamsType, body: UsersBodyType): Promise<UsersResponseType> {
-        return this.put<UsersResponseType>(`/users/${params.Id}`, body);
+        return this.put<UsersResponseType>(`/users/${params.id}`, body);
     }
 
+    /***
+     * Set new password
+     */
     async patchPasswordForUserById(
         params: UsersParamsType,
         body: PasswordBodyType
     ): Promise<PasswordResponseType> {
-        return this.patch<PasswordResponseType>(`/users/${params.Id}/password`, body);
+        return this.patch<PasswordResponseType>(`/users/${params.id}/password`, body);
     }
 
     async deleteUserById(params: UsersParamsType): Promise<UsersResponseType> {
-        return this.delete<UsersResponseType>(`/users/${params.Id}`);
+        return this.delete<UsersResponseType>(`/users/${params.id}`);
     }
 
-    async addUser(body: UsersBodyType): Promise<UsersResponseType> {
+    async addUser(body: UsersPostBodyType): Promise<UsersResponseType> {
         return this.post<UsersResponseType>('/users', body);
     }
 
@@ -908,7 +974,7 @@ export class ApiClient {
     }
 
     async getUsersById(params: UsersParamsType): Promise<ResultType<UsersResponseType>> {
-        return this.get<ResultType<UsersResponseType>>(`/users/${params.Id}`);
+        return this.get<ResultType<UsersResponseType>>(`/users/${params.id}`);
     }
 
     async getGoogleUrl(query: GoogleQueryType): Promise<ResultType<GoogleResponseType>> {
@@ -918,7 +984,7 @@ export class ApiClient {
         );
     }
 
-    async postGoogleData(body: GoogleBodyType): Promise<GoogleResponseType> {
+    async postGoogleData(body: GooglePostBodyType): Promise<GoogleResponseType> {
         return this.post<GoogleResponseType>('/login/google', body);
     }
 
@@ -929,7 +995,7 @@ export class ApiClient {
         );
     }
 
-    async postMicrosoftData(body: MicrosoftBodyType): Promise<MicrosoftResponseType> {
+    async postMicrosoftData(body: MicrosoftPostBodyType): Promise<MicrosoftResponseType> {
         return this.post<MicrosoftResponseType>('/login/microsoft', body);
     }
 
@@ -940,7 +1006,7 @@ export class ApiClient {
         );
     }
 
-    async postLinkedinData(body: LinkedinBodyType): Promise<LinkedinResponseType> {
+    async postLinkedinData(body: LinkedinPostBodyType): Promise<LinkedinResponseType> {
         return this.post<LinkedinResponseType>('/login/linkedin', body);
     }
 
@@ -951,7 +1017,7 @@ export class ApiClient {
         );
     }
 
-    async postFacebookData(body: FacebookBodyType): Promise<FacebookResponseType> {
+    async postFacebookData(body: FacebookPostBodyType): Promise<FacebookResponseType> {
         return this.post<FacebookResponseType>('/login/facebook', body);
     }
 
@@ -990,7 +1056,7 @@ export type UserType = {
 
 export type UserLoginType = {
     login?: string;
-    email: string;
+    email?: string;
     password: string;
     isInit?: string;
 };
@@ -1013,66 +1079,89 @@ export type DrawioResponseType = any;
 export type RegisterQueryType = any;
 
 export type RegisterResponseType = {
-    login?: string | number | boolean;
-    password?: string | number | boolean;
-    firstName?: string | number | boolean;
-    secondName?: string | number | boolean;
-    email?: string | number | boolean;
+    login?: string;
+    password?: string;
+    firstName?: string;
+    secondName?: string;
+    email?: string;
 };
 
 export type RegisterBodyType = {
-    login?: string | number | boolean;
-    password?: string | number | boolean;
-    firstName?: string | number | boolean;
-    secondName?: string | number | boolean;
-    email?: string | number | boolean;
+    login?: string;
+    password?: string;
+    firstName?: string;
+    secondName?: string;
+    email?: string;
+};
+
+export type RegisterPostBodyType = {
+    login?: string;
+    password: string;
+    firstName?: string;
+    secondName?: string;
+    email: string;
 };
 
 export type LoginQueryType = any;
 
 export type LoginResponseType = {
-    login?: string | number | boolean;
-    password?: string | number | boolean;
-    email?: string | number | boolean;
-    firstName?: string | number | boolean;
-    newPassword?: string | number | boolean;
+    login?: string;
+    password?: string;
+    email?: string;
+    firstName?: string;
+    newPassword?: string;
 };
 
 export type LoginBodyType = {
-    login?: string | number | boolean;
-    password?: string | number | boolean;
-    email?: string | number | boolean;
-    firstName?: string | number | boolean;
-    newPassword?: string | number | boolean;
+    login?: string;
+    password?: string;
+    email?: string;
+    firstName?: string;
+    newPassword?: string;
+};
+
+export type LoginPostBodyType = {
+    login?: string;
+    password: string;
 };
 
 export type LoginParamsType = {
-    Service?: string | number | boolean;
-    ExternalName?: string | number | boolean;
+    service?: string | number | boolean;
+    externalName?: string | number | boolean;
 };
 
 export type CheckQueryType = any;
 
 export type CheckResponseType = {
-    email?: string | number | boolean;
-    login?: string | number | boolean;
-    code?: string | number | boolean;
+    email?: string;
+    login?: string;
+    code?: string;
 };
 
 export type CheckBodyType = {
-    email?: string | number | boolean;
-    login?: string | number | boolean;
-    code?: string | number | boolean;
+    email?: string;
+    login?: string;
+    code?: string;
+};
+
+export type CheckPostBodyType = {
+    email?: string;
+    login?: string;
+    code: string;
 };
 
 export type RefreshQueryType = any;
 
 export type RefreshResponseType = {
-    refresh?: string | number | boolean;
+    refresh?: string;
 };
 
 export type RefreshBodyType = {
-    refresh?: string | number | boolean;
+    refresh?: string;
+};
+
+export type RefreshPostBodyType = {
+    refresh: string;
 };
 
 export type LogoutQueryType = any;
@@ -1081,50 +1170,81 @@ export type LogoutResponseType = any;
 
 export type LogoutBodyType = any;
 
+export type LogoutPostBodyType = any;
+
+export type ResendQueryType = any;
+
+export type ResendResponseType = {
+    email?: string;
+};
+
+export type ResendBodyType = {
+    email?: string;
+};
+
+export type ResendPostBodyType = {
+    email: string;
+};
+
 export type ForgotQueryType = any;
 
 export type ForgotResponseType = {
-    login?: string | number | boolean;
+    login?: string;
 };
 
 export type ForgotBodyType = {
-    login?: string | number | boolean;
+    login?: string;
+};
+
+export type ForgotPostBodyType = {
+    login: string;
 };
 
 export type RestoreQueryType = any;
 
 export type RestoreResponseType = {
-    code?: string | number | boolean;
-    password?: string | number | boolean;
+    code?: string;
+    password?: string;
 };
 
 export type RestoreBodyType = {
-    code?: string | number | boolean;
-    password?: string | number | boolean;
+    code?: string;
+    password?: string;
+};
+
+export type RestorePostBodyType = {
+    code: string;
+    password: string;
 };
 
 export type EmailQueryType = any;
 
 export type EmailResponseType = {
-    code?: string | number | boolean;
+    code?: string;
 };
 
 export type EmailBodyType = {
-    code?: string | number | boolean;
+    code?: string;
+};
+
+export type EmailPostBodyType = {
+    code: string;
 };
 
 export type ExternalsQueryType = any;
 
 export type ExternalsResponseType = any;
 
+export type StatusesPostBodyType = any;
+
 export type UsersParamsType = {
-    UserId?: string | number | boolean;
-    StatusName?: string | number | boolean;
-    Id?: string | number | boolean;
+    userId?: string | number | boolean;
+    statusName?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type SuperadminParamsType = {
-    UserId?: string | number | boolean;
+    userId?: string | number | boolean;
 };
 
 export type TokensQueryType = any;
@@ -1137,19 +1257,23 @@ export type SubscribeResponseType = any;
 
 export type SubscribeBodyType = any;
 
+export type SubscribePostBodyType = any;
+
 export type ImagesQueryType = any;
 
 export type ImagesResponseType = any;
 
 export type ImagesBodyType = any;
 
+export type ImagesPostBodyType = any;
+
 export type ImagesParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type NewsParamsType = {
-    NewsId?: string | number | boolean;
-    Id?: string | number | boolean;
+    newsId?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type NewsQueryType = {
@@ -1223,6 +1347,15 @@ export type NewsBodyType = {
     totalLikes?: number;
 };
 
+export type NewsPostBodyType = {
+    timePublished?: string;
+    userId?: number;
+    title?: string;
+    announcement?: string;
+    body?: string;
+    totalLikes?: number;
+};
+
 export type KeyPointsQueryType = {
     id?: number;
     timeCreated?: string;
@@ -1269,8 +1402,14 @@ export type KeyPointsBodyType = {
     question?: string;
 };
 
+export type KeyPointsPostBodyType = {
+    userId?: number;
+    topicId?: number;
+    question?: string;
+};
+
 export type TopicsParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type UserStatusesQueryType = {
@@ -1332,6 +1471,14 @@ export type UserStatusesBodyType = {
     learnStatusId?: number;
 };
 
+export type UserStatusesPostBodyType = {
+    timeStarted?: string;
+    timeFinished?: string;
+    userId?: number;
+    topicId?: number;
+    learnStatusId?: number;
+};
+
 export type TopicsQueryType = {
     id?: number;
     timeCreated?: string;
@@ -1381,6 +1528,21 @@ export type TopicsResponseType = {
 };
 
 export type TopicsBodyType = {
+    userId?: number;
+    name?: string;
+    description?: string;
+    type?: string;
+    tags?: string;
+    slug?: string;
+    timeToLearnMinutes?: number;
+    courseId?: number;
+    topicId?: number;
+    isPreRequirement?: boolean;
+    goalId?: number;
+    categoryId?: number;
+};
+
+export type TopicsPostBodyType = {
     userId?: number;
     name?: string;
     description?: string;
@@ -1455,9 +1617,17 @@ export type TeachersBodyType = {
     teacherName?: string;
 };
 
+export type TeachersPostBodyType = {
+    userId?: number;
+    sceduleId?: number;
+    teacherId?: number;
+    courseName?: string;
+    teacherName?: string;
+};
+
 export type CoursesParamsType = {
-    Id?: string | number | boolean;
-    CourseId?: string | number | boolean;
+    id?: string | number | boolean;
+    courseId?: string | number | boolean;
 };
 
 export type CoursesQueryType = {
@@ -1501,6 +1671,12 @@ export type CoursesResponseType = {
 };
 
 export type CoursesBodyType = {
+    userId?: number;
+    name?: string;
+    description?: string;
+};
+
+export type CoursesPostBodyType = {
     userId?: number;
     name?: string;
     description?: string;
@@ -1584,9 +1760,20 @@ export type SchedulesBodyType = {
     price?: number;
 };
 
+export type SchedulesPostBodyType = {
+    timeStart?: string;
+    timeEnd?: string;
+    userId?: number;
+    courseId?: number;
+    regionId?: number;
+    langId?: number;
+    isOnline?: boolean;
+    price?: number;
+};
+
 export type SchedulesParamsType = {
-    Id?: string | number | boolean;
-    ScheduleId?: string | number | boolean;
+    id?: string | number | boolean;
+    scheduleId?: string | number | boolean;
 };
 
 export type StudentsQueryType = {
@@ -1649,6 +1836,14 @@ export type StudentsBodyType = {
     studentName?: string;
 };
 
+export type StudentsPostBodyType = {
+    userId?: number;
+    sceduleId?: number;
+    studentId?: number;
+    courseName?: string;
+    studentName?: string;
+};
+
 export type SharesQueryType = {
     id?: number;
     timeCreated?: string;
@@ -1687,8 +1882,13 @@ export type SharesBodyType = {
     userId?: number;
 };
 
+export type SharesPostBodyType = {
+    goalId?: number;
+    userId?: number;
+};
+
 export type GoalsParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type GoalsQueryType = {
@@ -1758,8 +1958,17 @@ export type GoalsBodyType = {
     motto?: string;
 };
 
+export type GoalsPostBodyType = {
+    userId?: number;
+    name?: string;
+    description?: string;
+    motivation?: string;
+    deadline?: string;
+    motto?: string;
+};
+
 export type CategoriesParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type CategoriesQueryType = {
@@ -1808,16 +2017,22 @@ export type CategoriesBodyType = {
     description?: string;
 };
 
+export type CategoriesPostBodyType = {
+    userId?: number;
+    name?: string;
+    description?: string;
+};
+
 export type TreeQueryType = any;
 
 export type TreeResponseType = any;
 
 export type TreeParamsType = {
-    AssetId?: string | number | boolean;
+    assetId?: string | number | boolean;
 };
 
 export type Tree2ParamsType = {
-    AssetId?: string | number | boolean;
+    assetId?: string | number | boolean;
 };
 
 export type LanguageCodesQueryType = {
@@ -1852,8 +2067,12 @@ export type LanguageCodesBodyType = {
     name?: string;
 };
 
+export type LanguageCodesPostBodyType = {
+    name?: string;
+};
+
 export type LanguageCodesParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type LearnStatusesQueryType = {
@@ -1890,8 +2109,13 @@ export type LearnStatusesBodyType = {
     description?: string;
 };
 
+export type LearnStatusesPostBodyType = {
+    name?: string;
+    description?: string;
+};
+
 export type LearnStatusesParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type RegionsQueryType = {
@@ -1926,24 +2150,38 @@ export type RegionsBodyType = {
     name?: string;
 };
 
+export type RegionsPostBodyType = {
+    name?: string;
+};
+
 export type RegionsParamsType = {
-    Id?: string | number | boolean;
+    id?: string | number | boolean;
 };
 
 export type MeQueryType = any;
 
 export type MeResponseType = any;
 
+export type UsersBodyType = {
+    login?: string;
+    firstName?: string;
+    secondName?: string;
+    options?: object;
+    timeCreated?: string;
+    timeUpdated?: string;
+    isUnsubscribed?: boolean;
+};
+
 export type PasswordQueryType = any;
 
 export type PasswordResponseType = {
-    password?: string | number | boolean;
-    newPassword?: string | number | boolean;
+    password?: string;
+    newPassword?: string;
 };
 
 export type PasswordBodyType = {
-    password?: string | number | boolean;
-    newPassword?: string | number | boolean;
+    password?: string;
+    newPassword?: string;
 };
 
 export type UsersQueryType = {
@@ -2006,7 +2244,7 @@ export type UsersResponseType = {
     isUnsubscribed?: boolean;
 };
 
-export type UsersBodyType = {
+export type UsersPostBodyType = {
     login?: string;
     firstName?: string;
     secondName?: string;
@@ -2022,11 +2260,15 @@ export type GoogleResponseType = any;
 
 export type GoogleBodyType = any;
 
+export type GooglePostBodyType = any;
+
 export type MicrosoftQueryType = any;
 
 export type MicrosoftResponseType = any;
 
 export type MicrosoftBodyType = any;
+
+export type MicrosoftPostBodyType = any;
 
 export type LinkedinQueryType = any;
 
@@ -2034,11 +2276,15 @@ export type LinkedinResponseType = any;
 
 export type LinkedinBodyType = any;
 
+export type LinkedinPostBodyType = any;
+
 export type FacebookQueryType = any;
 
 export type FacebookResponseType = any;
 
 export type FacebookBodyType = any;
+
+export type FacebookPostBodyType = any;
 
 export type StatusesBodyType = any;
 

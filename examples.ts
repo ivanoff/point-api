@@ -57,10 +57,10 @@ await f(
 
 await f('Get information about owner of token', client.getMeInUsers({}));
 
-await f('Get information about user by userId', client.getUsersById({ Id: userId }));
+await f('Get information about user by userId', client.getUsersById({ id: userId }));
 
-await f('Delete user', client.deleteUserById({ Id: userId }));
+await f('Delete user', client.deleteUserById({ id: userId }));
 
-await f('Get information about user by userId', client.getUsersById({ Id: userId }));
+await f('Get information about user by userId', client.getUsersById({ id: userId }));
 
 rl.close();
