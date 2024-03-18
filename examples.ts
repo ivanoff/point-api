@@ -12,7 +12,6 @@ const question = async (q): Promise<string> => new Promise((r) => rl.question(q,
 
 const user = {
     email: 'my.name.is.dimitry@gmail.com',
-    login: 'ivanoff',
     password: '1',
 };
 
@@ -30,7 +29,7 @@ const f = async (name, func) => {
 
 const client = new ApiClient({ url: 'https://api.dev.point.study' });
 
-const { id: userId } = await f('Register new user', client.registerNewUser(user));
+await f('Register new user', client.registerNewUser(user));
 
 const code = await question('Enter code from e-mail: ');
 
@@ -41,7 +40,10 @@ const { refresh } = await f(
     client.login({ email: user.email, password: user.password })
 );
 
-await f('Renew access token by refresh', client.refreshAccessToken({ refresh }));
+const { id: userId } = await f(
+    'Renew access token by refresh',
+    client.refreshAccessToken({ refresh })
+);
 
 await f('Register the same user, example of error', client.registerNewUser(user));
 
@@ -55,6 +57,19 @@ await f(
     })
 );
 
+await f(
+    'Update user profile',
+    client.updateUserById(
+        { id: userId },
+        {
+            fullName: 'Test User',
+            biography: 'I am first user',
+            timezone: 'Europe/London',
+            avatar: './avatar.png',
+        }
+    )
+);
+
 await f('Get information about owner of token', client.getMeInUsers({}));
 
 await f('Get information about user by userId', client.getUsersById({ id: userId }));
@@ -62,5 +77,12 @@ await f('Get information about user by userId', client.getUsersById({ id: userId
 await f('Delete user', client.deleteUserById({ id: userId }));
 
 await f('Get information about user by userId', client.getUsersById({ id: userId }));
+
+await f('Get list of timezones', client.getTimezones({ _limit: 5, _sort: 'name' }));
+
+await f(
+    'Search "europe k" timezone',
+    client.getTimezones({ _search: 'europe k', _fields: 'name', _limit: 1 })
+);
 
 rl.close();

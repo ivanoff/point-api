@@ -1,3 +1,4 @@
+import fs from 'fs/promises';
 const getRandomInt = (max: number) => Math.floor(Math.random() * Math.floor(max));
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -80,6 +81,32 @@ export class ApiClient {
         return response?.json();
     }
 
+    async postFormdata<T>(endpoint: string, data?: any, fileFieldNames?: string[]): Promise<T> {
+        const formData = new FormData();
+        for (const [key, v] of Object.entries(data)) {
+            for (const val of [].concat(v as any)) {
+                if (fileFieldNames?.includes(key)) {
+                    if (typeof val === 'string') {
+                        const content = await fs.readFile(val);
+                        const blob = new Blob([new Uint8Array(content)]);
+                        formData.append(key, blob, val);
+                    } else {
+                        formData.append(key, val);
+                    }
+                } else {
+                    formData.append(key, val);
+                }
+            }
+        }
+
+        const response = await this.fetchWithToken(endpoint, {
+            method: 'POST',
+            body: formData,
+        });
+
+        return response?.json();
+    }
+
     async put<T>(endpoint: string, data?: any): Promise<T> {
         const response = await this.fetchWithToken(endpoint, {
             method: 'PUT',
@@ -88,6 +115,32 @@ export class ApiClient {
                 'Content-Type': 'application/json',
             },
         });
+        return response?.json();
+    }
+
+    async putFormdata<T>(endpoint: string, data?: any, fileFieldNames?: string[]): Promise<T> {
+        const formData = new FormData();
+        for (const [key, v] of Object.entries(data)) {
+            for (const val of [].concat(v as any)) {
+                if (fileFieldNames?.includes(key)) {
+                    if (typeof val === 'string') {
+                        const content = await fs.readFile(val);
+                        const blob = new Blob([new Uint8Array(content)]);
+                        formData.append(key, blob, val);
+                    } else {
+                        formData.append(key, val);
+                    }
+                } else {
+                    formData.append(key, val);
+                }
+            }
+        }
+
+        const response = await this.fetchWithToken(endpoint, {
+            method: 'PUT',
+            body: formData,
+        });
+
         return response?.json();
     }
 
@@ -959,7 +1012,7 @@ export class ApiClient {
     }
 
     async updateUserById(params: UsersParamsType, body: UsersBodyType): Promise<UsersResponseType> {
-        return this.put<UsersResponseType>(`/users/${params.id}`, body);
+        return this.putFormdata<UsersResponseType>(`/users/${params.id}`, body, ['avatar']);
     }
 
     async deleteUserById(params: UsersParamsType): Promise<UsersResponseType> {
