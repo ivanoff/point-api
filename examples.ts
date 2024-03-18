@@ -1,4 +1,5 @@
 import * as readline from 'readline';
+import fs from 'fs/promises';
 // import { ApiClient } from '@point/api';
 import { ApiClient } from './src/index';
 
@@ -69,6 +70,11 @@ await f(
         }
     )
 );
+
+const content = await fs.readFile('./avatar.png');
+const avatar = new Blob([new Uint8Array(content)]);
+
+await f('Another way to update avatar', client.updateUserById({ id: userId }, { avatar }));
 
 await f('Get information about owner of token', client.getMeInUsers({}));
 

@@ -1144,7 +1144,7 @@ export type UserLoginResultType = {
     refresh: string;
 };
 
-export type ImagePostType = string | File;
+export type ImagePostType = string | File | Blob;
 
 export type ImageGetType = {
     id: string;
