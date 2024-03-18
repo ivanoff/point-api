@@ -164,6 +164,13 @@ export class ApiClient {
         return res;
     }
 
+    async getCheck(query: CheckQueryType): Promise<ResultType<CheckResponseType>> {
+        const queryString = this.handleQueryString(query);
+        return this.get<ResultType<CheckResponseType>>(
+            queryString ? `/check?${queryString}` : '/check'
+        );
+    }
+
     async getDrawio(query: DrawioQueryType): Promise<ResultType<DrawioResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<DrawioResponseType>>(
@@ -944,8 +951,19 @@ export class ApiClient {
         );
     }
 
+    async addUserById(
+        params: UsersParamsType,
+        body: UsersPostBodyType
+    ): Promise<UsersResponseType> {
+        return this.post<UsersResponseType>(`/users/${params.id}`, body);
+    }
+
     async updateUserById(params: UsersParamsType, body: UsersBodyType): Promise<UsersResponseType> {
         return this.put<UsersResponseType>(`/users/${params.id}`, body);
+    }
+
+    async deleteUserById(params: UsersParamsType): Promise<UsersResponseType> {
+        return this.delete<UsersResponseType>(`/users/${params.id}`);
     }
 
     /***
@@ -956,10 +974,6 @@ export class ApiClient {
         body: PasswordBodyType
     ): Promise<PasswordResponseType> {
         return this.patch<PasswordResponseType>(`/users/${params.id}/password`, body);
-    }
-
-    async deleteUserById(params: UsersParamsType): Promise<UsersResponseType> {
-        return this.delete<UsersResponseType>(`/users/${params.id}`);
     }
 
     async addUser(body: UsersPostBodyType): Promise<UsersResponseType> {
@@ -1021,11 +1035,17 @@ export class ApiClient {
         return this.post<FacebookResponseType>('/login/facebook', body);
     }
 
-    async getCheck(query: CheckQueryType): Promise<ResultType<CheckResponseType>> {
+    async getTimezones(query: TimezonesQueryType): Promise<ResultType<TimezonesResponseType>> {
         const queryString = this.handleQueryString(query);
-        return this.get<ResultType<CheckResponseType>>(
-            queryString ? `/check?${queryString}` : '/check'
+        return this.get<ResultType<TimezonesResponseType>>(
+            queryString ? `/timezones?${queryString}` : '/timezones'
         );
+    }
+
+    async getTimezonesById(
+        params: TimezonesParamsType
+    ): Promise<ResultType<TimezonesResponseType>> {
+        return this.get<ResultType<TimezonesResponseType>>(`/timezones/${params.id}`);
     }
 }
 
@@ -1066,10 +1086,31 @@ export type UserLoginResultType = {
     login: string;
     statuses: string[];
     token: string;
-    firstName?: string;
-    secondName?: string;
+    fullName?: string;
     email: string;
     refresh: string;
+};
+
+export type ImagePostType = string | File;
+
+export type ImageGetType = {
+    id: string;
+    timeCreated: string;
+    timeUpdated: string;
+    name: string;
+    path: string;
+    type?: string;
+    group: string;
+    sizeName?: string;
+    userId?: number;
+};
+
+export type CheckQueryType = any;
+
+export type CheckResponseType = {
+    email?: string;
+    login?: string;
+    code?: string;
 };
 
 export type DrawioQueryType = any;
@@ -1081,24 +1122,21 @@ export type RegisterQueryType = any;
 export type RegisterResponseType = {
     login?: string;
     password?: string;
-    firstName?: string;
-    secondName?: string;
+    fullName?: string;
     email?: string;
 };
 
 export type RegisterBodyType = {
     login?: string;
     password?: string;
-    firstName?: string;
-    secondName?: string;
+    fullName?: string;
     email?: string;
 };
 
 export type RegisterPostBodyType = {
     login?: string;
     password: string;
-    firstName?: string;
-    secondName?: string;
+    fullName?: string;
     email: string;
 };
 
@@ -1108,7 +1146,7 @@ export type LoginResponseType = {
     login?: string;
     password?: string;
     email?: string;
-    firstName?: string;
+    fullName?: string;
     newPassword?: string;
 };
 
@@ -1116,7 +1154,7 @@ export type LoginBodyType = {
     login?: string;
     password?: string;
     email?: string;
-    firstName?: string;
+    fullName?: string;
     newPassword?: string;
 };
 
@@ -1128,14 +1166,6 @@ export type LoginPostBodyType = {
 export type LoginParamsType = {
     service?: string | number | boolean;
     externalName?: string | number | boolean;
-};
-
-export type CheckQueryType = any;
-
-export type CheckResponseType = {
-    email?: string;
-    login?: string;
-    code?: string;
 };
 
 export type CheckBodyType = {
@@ -2162,14 +2192,28 @@ export type MeQueryType = any;
 
 export type MeResponseType = any;
 
-export type UsersBodyType = {
+export type UsersPostBodyType = {
+    avatar?: string | number | boolean;
     login?: string;
-    firstName?: string;
-    secondName?: string;
     options?: object;
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
+    fullName?: string;
+    biography?: string;
+    timezone?: string;
+};
+
+export type UsersBodyType = {
+    avatar?: ImagePostType;
+    login?: string;
+    options?: object;
+    timeCreated?: string;
+    timeUpdated?: string;
+    isUnsubscribed?: boolean;
+    fullName?: string;
+    biography?: string;
+    timezone?: string;
 };
 
 export type PasswordQueryType = any;
@@ -2187,17 +2231,14 @@ export type PasswordBodyType = {
 export type UsersQueryType = {
     id?: number;
     login?: string;
-    firstName?: string;
-    secondName?: string;
     options?: object;
     timeCreated?: string;
     timeUpdated?: string;
     statuses?: (string | number)[];
     isUnsubscribed?: boolean;
-    _null_firstName?: string;
-    _not_null_firstName?: string;
-    _null_secondName?: string;
-    _not_null_secondName?: string;
+    fullName?: string;
+    biography?: string;
+    timezone?: string;
     _null_options?: string;
     _not_null_options?: string;
     _null_timeCreated?: string;
@@ -2208,14 +2249,16 @@ export type UsersQueryType = {
     _not_null_statuses?: string;
     _null_isUnsubscribed?: string;
     _not_null_isUnsubscribed?: string;
+    _null_fullName?: string;
+    _not_null_fullName?: string;
+    _null_biography?: string;
+    _not_null_biography?: string;
+    _null_timezone?: string;
+    _not_null_timezone?: string;
     _from_id?: number;
     _to_id?: number;
     _from_login?: string;
     _to_login?: string;
-    _from_firstName?: string;
-    _to_firstName?: string;
-    _from_secondName?: string;
-    _to_secondName?: string;
     _from_options?: object;
     _to_options?: object;
     _from_timeCreated?: string;
@@ -2224,6 +2267,13 @@ export type UsersQueryType = {
     _to_timeUpdated?: string;
     _from_statuses?: (string | number)[];
     _to_statuses?: (string | number)[];
+    _from_fullName?: string;
+    _to_fullName?: string;
+    _from_biography?: string;
+    _to_biography?: string;
+    _from_timezone?: string;
+    _to_timezone?: string;
+    avatar?: ImageGetType[];
     _fields?: string;
     _sort?: string;
     _join?: string;
@@ -2235,23 +2285,15 @@ export type UsersQueryType = {
 };
 
 export type UsersResponseType = {
+    avatar?: ImageGetType[];
     login?: string;
-    firstName?: string;
-    secondName?: string;
     options?: object;
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-};
-
-export type UsersPostBodyType = {
-    login?: string;
-    firstName?: string;
-    secondName?: string;
-    options?: object;
-    timeCreated?: string;
-    timeUpdated?: string;
-    isUnsubscribed?: boolean;
+    fullName?: string;
+    biography?: string;
+    timezone?: string;
 };
 
 export type GoogleQueryType = any;
@@ -2285,6 +2327,23 @@ export type FacebookResponseType = any;
 export type FacebookBodyType = any;
 
 export type FacebookPostBodyType = any;
+
+export type TimezonesQueryType = {
+    _fields?: string;
+    _sort?: string;
+    _join?: string;
+    _limit?: number;
+    _page?: number;
+    _skip?: number;
+    _lang?: string;
+    _search?: string;
+};
+
+export type TimezonesResponseType = any;
+
+export type TimezonesParamsType = {
+    id?: string | number | boolean;
+};
 
 export type StatusesBodyType = any;
 

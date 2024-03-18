@@ -33,7 +33,7 @@ console.log(users);
 
 #### Register
 
-`curl https://api.dev.point.study/register -H 'Content-Type: application/json' -d '{"login": "test", "password": "12345", "email": "2@ivanoff.org.ua", "firstName": "Test", "secondName": "Testing"}'`
+`curl https://api.dev.point.study/register -H 'Content-Type: application/json' -d '{"login": "test", "password": "12345", "email": "2@ivanoff.org.ua", "fullName": "Test"}'`
 
 ```json
 {
@@ -41,8 +41,7 @@ console.log(users);
     "login": "test",
     "statuses": ["unconfirmed"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoidW5jb25maXJtZWQiLCJmaXJzdF9uYW1lIjoiVGVzdCIsImlhdCI6MTY1ODQyNzc4OSwiZXhwIjoxNjU4NDMxMzg5fQ.TfurQln1Qf98_vy-wRqIKIxPTttzDCbp0CIaMsoqPb8",
-    "firstName": "Test",
-    "secondName": "Testing",
+    "fullName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -67,8 +66,7 @@ Mail with code
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI3OTQzLCJleHAiOjE2NTg0MzE1NDN9.2jftgg4vOEGvSFIPSG6BOnAU1i3uVpuzaXexBPvTFOw",
-    "firstName": "Test",
-    "secondName": "Testing",
+    "fullName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -89,8 +87,7 @@ Mail with code
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ",
-    "firstName": "Test",
-    "secondName": "Testing",
+    "fullName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -104,13 +101,13 @@ Mail with code
 
 #### Utilize External Services (e.g., Google)
 
-1. Navigate to `https://api.dev.point.study/battlepro/login/google` to grant access to your data.
+1. Navigate to `https://api.dev.point.study/login/google` to grant access to your data.
 
-2. Upon granting access, the callback URL will resemble:  `https://api.dev.point.study/battlepro/login/google?code=__code_&scope=_scope_....`
+2. Upon granting access, the callback URL will resemble:  `https://api.dev.point.study/login/google?code=__code_&scope=_scope_....`
 
-3. Send a `POST` request to `https://api.dev.point.study/battlepro/login/google` including a body constructed from the query parameters: `{"code":"_code_","scope":"_scope_",....}`
+3. Send a `POST` request to `https://api.dev.point.study/login/google` including a body constructed from the query parameters: `{"code":"_code_","scope":"_scope_",....}`
 
-4. You'll receive token for `battlepro` and a `refresh token`.
+4. You'll receive token for `point` and a `refresh token`.
 
 5. Utilize the `refresh token` to acquire tokens for any server by sending a `POST` request to `https://api.dev.point.study/{serverSlug}/login` with the body `{"refresh": "refresh token"}'`
 
@@ -152,8 +149,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "salt": null,
     "refresh": null,
     "statuses": [null],
-    "firstName": "Test",
-    "secondName": "Testing",
+    "fullName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -184,13 +180,13 @@ After password changed, `time_password_changed` field should be updated to curre
   id: 7,
   login: 'aaa5',
   statuses: [ 'registered' ],
-  firstName: 'John'
+  fullName: 'John'
 }
 ```
 
 #### Update user info
 
-`curl https://api.dev.point.study/users/1 -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ' -d '{"firstName": "Test2", "secondName": "Testing2", "phone": "991029384953"}'`
+`curl https://api.dev.point.study/users/1 -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ' -d '{"fullName": "Test2", "phone": "991029384953"}'`
 
 ```json
 {
@@ -200,8 +196,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "salt": "95a6ad59-188f-47db-9430-7b358756dd10",
     "refresh": "6c2d7068-c511-47fe-9b0f-ae3d212f4bb9",
     "statuses": ["registered"],
-    "firstName": "Test2",
-    "secondName": "Testing2",
+    "fullName": "Test2",
     "options": {
         "email": {
             "on": true
@@ -244,8 +239,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0MiIsImlhdCI6MTY1ODQzMDkwMiwiZXhwIjoxNjU4NDM0NTAyfQ.Gc3rgldHUY9XdsNKvmxaTINiTVXzD6OYFc6ObFPRqFI",
-    "firstName": "Test2",
-    "secondName": "Testing2",
+    "fullName": "Test2",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -308,8 +302,7 @@ root has `root` password by dafault, so change it asap
     "login": "root",
     "statuses": ["root"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQzODUsImV4cCI6MTY1ODQ4Nzk4NX0.M4DamkmcoWYwpQuMHOhcVv1NqESXogJG0TTF425m5tI",
-    "firstName": null,
-    "secondName": null,
+    "fullName": null,
     "email": null,
     "options": null,
     "refresh": "62d073c9-ec4c-4a64-af6c-ae19ffab6695",
@@ -321,7 +314,7 @@ root has `root` password by dafault, so change it asap
 
 #### Updating user by root
 
-`curl https://api.dev.point.study/admin/users/1 -X PATCH -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQ2NDksImV4cCI6MTY1ODQ4ODI0OX0.Mq8VF3tSzQ4u9c9dXyHV0wJN0ZFTtnZZNHf280wHoEA' -d '{"firstName": "Test33", "secondName": "Testing33", "phone": "333333333333"}'`
+`curl https://api.dev.point.study/admin/users/1 -X PATCH -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQ2NDksImV4cCI6MTY1ODQ4ODI0OX0.Mq8VF3tSzQ4u9c9dXyHV0wJN0ZFTtnZZNHf280wHoEA' -d '{"fullName": "Test33", "phone": "333333333333"}'`
 
 ```json
 [
@@ -341,8 +334,7 @@ root has `root` password by dafault, so change it asap
     "salt": null,
     "refresh": null,
     "statuses": [null],
-    "firstName": "Test33",
-    "secondName": "Testing33",
+    "fullName": "Test33",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
