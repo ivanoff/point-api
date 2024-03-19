@@ -3,6 +3,14 @@ import fs from 'fs/promises';
 // import { ApiClient } from '@point/api';
 import { ApiClient } from './src/index';
 
+// const url = 'http://localhost:7788';
+const url = 'https://api.dev.point.study';
+
+const user = {
+    email: 'my.name.is.dimitry@gmail.com',
+    password: '1',
+};
+
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
@@ -10,11 +18,6 @@ const rl = readline.createInterface({
 });
 
 const question = async (q): Promise<string> => new Promise((r) => rl.question(q, r));
-
-const user = {
-    email: 'my.name.is.dimitry@gmail.com',
-    password: '1',
-};
 
 const f = async (name, func) => {
     console.log(`>>> ${name}`);
@@ -28,7 +31,7 @@ const f = async (name, func) => {
 
 // examples flow
 
-const client = new ApiClient({ url: 'https://api.dev.point.study' });
+const client = new ApiClient({ url });
 
 await f('Register new user', client.registerNewUser(user));
 
@@ -63,7 +66,8 @@ await f(
     client.updateUserById(
         { id: userId },
         {
-            fullName: 'Test User',
+            firstName: 'Test',
+            secondName: 'User',
             biography: 'I am first user',
             timezone: 'Europe/London',
             avatar: './avatar.png',
@@ -90,5 +94,15 @@ await f(
     'Search "europe k" timezone',
     client.getTimezones({ _search: 'europe k', _fields: 'name', _limit: 1 })
 );
+
+// const googleCallbackUrl = await question(`Open ${url}/login/google and paste result URL here: `);
+// const [, query] = googleCallbackUrl.match(/^.*?\?(.*)/) || [];
+// const g = query.split('&').reduce((acc, cur) => {
+//     const m = cur.match(/^(.*?)=(.*)$/);
+//     acc[m[1]] = m[2];
+//     return acc;
+// }, {});
+
+// await f('Get google login', client.postGoogleData(g));
 
 rl.close();

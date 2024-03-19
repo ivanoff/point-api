@@ -33,7 +33,7 @@ console.log(users);
 
 #### Register
 
-`curl https://api.dev.point.study/register -H 'Content-Type: application/json' -d '{"login": "test", "password": "12345", "email": "2@ivanoff.org.ua", "fullName": "Test"}'`
+`curl https://api.dev.point.study/register -H 'Content-Type: application/json' -d '{"login": "test", "password": "12345", "email": "2@ivanoff.org.ua", "firstName": "Test"}'`
 
 ```json
 {
@@ -41,7 +41,7 @@ console.log(users);
     "login": "test",
     "statuses": ["unconfirmed"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoidW5jb25maXJtZWQiLCJmaXJzdF9uYW1lIjoiVGVzdCIsImlhdCI6MTY1ODQyNzc4OSwiZXhwIjoxNjU4NDMxMzg5fQ.TfurQln1Qf98_vy-wRqIKIxPTttzDCbp0CIaMsoqPb8",
-    "fullName": "Test",
+    "firstName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -66,7 +66,7 @@ Mail with code
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI3OTQzLCJleHAiOjE2NTg0MzE1NDN9.2jftgg4vOEGvSFIPSG6BOnAU1i3uVpuzaXexBPvTFOw",
-    "fullName": "Test",
+    "firstName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -87,7 +87,7 @@ Mail with code
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ",
-    "fullName": "Test",
+    "firstName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -149,7 +149,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "salt": null,
     "refresh": null,
     "statuses": [null],
-    "fullName": "Test",
+    "firstName": "Test",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -180,13 +180,13 @@ After password changed, `time_password_changed` field should be updated to curre
   id: 7,
   login: 'aaa5',
   statuses: [ 'registered' ],
-  fullName: 'John'
+  firstName: 'John'
 }
 ```
 
 #### Update user info
 
-`curl https://api.dev.point.study/users/1 -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ' -d '{"fullName": "Test2", "phone": "991029384953"}'`
+`curl https://api.dev.point.study/users/1 -X PUT -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0IiwiaWF0IjoxNjU4NDI4MDkzLCJleHAiOjE2NTg0MzE2OTN9.8LIJqLLvQ-8DcQJ7bi9Btkf1Hxbxiv-lqAv6GqfT_RQ' -d '{"firstName": "Test2", "phone": "991029384953"}'`
 
 ```json
 {
@@ -196,7 +196,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "salt": "95a6ad59-188f-47db-9430-7b358756dd10",
     "refresh": "6c2d7068-c511-47fe-9b0f-ae3d212f4bb9",
     "statuses": ["registered"],
-    "fullName": "Test2",
+    "firstName": "Test2",
     "options": {
         "email": {
             "on": true
@@ -239,7 +239,7 @@ After password changed, `time_password_changed` field should be updated to curre
     "login": "test",
     "statuses": ["registered"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwibG9naW4iOiJ0ZXN0Iiwic3RhdHVzIjoicmVnaXN0ZXJlZCIsImZpcnN0X25hbWUiOiJUZXN0MiIsImlhdCI6MTY1ODQzMDkwMiwiZXhwIjoxNjU4NDM0NTAyfQ.Gc3rgldHUY9XdsNKvmxaTINiTVXzD6OYFc6ObFPRqFI",
-    "fullName": "Test2",
+    "firstName": "Test2",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {
@@ -302,7 +302,7 @@ root has `root` password by dafault, so change it asap
     "login": "root",
     "statuses": ["root"],
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQzODUsImV4cCI6MTY1ODQ4Nzk4NX0.M4DamkmcoWYwpQuMHOhcVv1NqESXogJG0TTF425m5tI",
-    "fullName": null,
+    "firstName": null,
     "email": null,
     "options": null,
     "refresh": "62d073c9-ec4c-4a64-af6c-ae19ffab6695",
@@ -314,7 +314,7 @@ root has `root` password by dafault, so change it asap
 
 #### Updating user by root
 
-`curl https://api.dev.point.study/admin/users/1 -X PATCH -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQ2NDksImV4cCI6MTY1ODQ4ODI0OX0.Mq8VF3tSzQ4u9c9dXyHV0wJN0ZFTtnZZNHf280wHoEA' -d '{"fullName": "Test33", "phone": "333333333333"}'`
+`curl https://api.dev.point.study/admin/users/1 -X PATCH -H 'Content-Type: application/json' -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6LTEsImxvZ2luIjoicm9vdCIsInN0YXR1cyI6InJvb3QiLCJmaXJzdF9uYW1lIjpudWxsLCJpYXQiOjE2NTg0ODQ2NDksImV4cCI6MTY1ODQ4ODI0OX0.Mq8VF3tSzQ4u9c9dXyHV0wJN0ZFTtnZZNHf280wHoEA' -d '{"firstName": "Test33", "phone": "333333333333"}'`
 
 ```json
 [
@@ -334,7 +334,7 @@ root has `root` password by dafault, so change it asap
     "salt": null,
     "refresh": null,
     "statuses": [null],
-    "fullName": "Test33",
+    "firstName": "Test33",
     "email": "2@ivanoff.org.ua",
     "options": {
         "email": {

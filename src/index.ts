@@ -1139,7 +1139,8 @@ export type UserLoginResultType = {
     login: string;
     statuses: string[];
     token: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     email: string;
     refresh: string;
 };
@@ -1175,21 +1176,24 @@ export type RegisterQueryType = any;
 export type RegisterResponseType = {
     login?: string;
     password?: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     email?: string;
 };
 
 export type RegisterBodyType = {
     login?: string;
     password?: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     email?: string;
 };
 
 export type RegisterPostBodyType = {
     login?: string;
     password: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     email: string;
 };
 
@@ -1199,7 +1203,8 @@ export type LoginResponseType = {
     login?: string;
     password?: string;
     email?: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     newPassword?: string;
 };
 
@@ -1207,7 +1212,8 @@ export type LoginBodyType = {
     login?: string;
     password?: string;
     email?: string;
-    fullName?: string;
+    firstName?: string;
+    secondName?: string;
     newPassword?: string;
 };
 
@@ -2252,9 +2258,10 @@ export type UsersPostBodyType = {
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-    fullName?: string;
     biography?: string;
     timezone?: string;
+    firstName?: string;
+    secondName?: string;
 };
 
 export type UsersBodyType = {
@@ -2264,9 +2271,10 @@ export type UsersBodyType = {
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-    fullName?: string;
     biography?: string;
     timezone?: string;
+    firstName?: string;
+    secondName?: string;
 };
 
 export type PasswordQueryType = any;
@@ -2289,9 +2297,10 @@ export type UsersQueryType = {
     timeUpdated?: string;
     statuses?: (string | number)[];
     isUnsubscribed?: boolean;
-    fullName?: string;
     biography?: string;
     timezone?: string;
+    firstName?: string;
+    secondName?: string;
     _null_options?: string;
     _not_null_options?: string;
     _null_timeCreated?: string;
@@ -2302,12 +2311,14 @@ export type UsersQueryType = {
     _not_null_statuses?: string;
     _null_isUnsubscribed?: string;
     _not_null_isUnsubscribed?: string;
-    _null_fullName?: string;
-    _not_null_fullName?: string;
     _null_biography?: string;
     _not_null_biography?: string;
     _null_timezone?: string;
     _not_null_timezone?: string;
+    _null_firstName?: string;
+    _not_null_firstName?: string;
+    _null_secondName?: string;
+    _not_null_secondName?: string;
     _from_id?: number;
     _to_id?: number;
     _from_login?: string;
@@ -2320,12 +2331,14 @@ export type UsersQueryType = {
     _to_timeUpdated?: string;
     _from_statuses?: (string | number)[];
     _to_statuses?: (string | number)[];
-    _from_fullName?: string;
-    _to_fullName?: string;
     _from_biography?: string;
     _to_biography?: string;
     _from_timezone?: string;
     _to_timezone?: string;
+    _from_firstName?: string;
+    _to_firstName?: string;
+    _from_secondName?: string;
+    _to_secondName?: string;
     avatar?: ImageGetType[];
     _fields?: string;
     _sort?: string;
@@ -2344,9 +2357,10 @@ export type UsersResponseType = {
     timeCreated?: string;
     timeUpdated?: string;
     isUnsubscribed?: boolean;
-    fullName?: string;
     biography?: string;
     timezone?: string;
+    firstName?: string;
+    secondName?: string;
 };
 
 export type GoogleQueryType = any;
