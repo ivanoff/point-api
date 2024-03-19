@@ -61,6 +61,9 @@ await f(
     })
 );
 
+const content = await fs.readFile('./avatar.png');
+const avatar = new Blob([new Uint8Array(content)]);
+
 await f(
     'Update user profile',
     client.updateUserById(
@@ -70,15 +73,10 @@ await f(
             secondName: 'User',
             biography: 'I am first user',
             timezone: 'Europe/London',
-            avatar: './avatar.png',
+            avatar,
         }
     )
 );
-
-const content = await fs.readFile('./avatar.png');
-const avatar = new Blob([new Uint8Array(content)]);
-
-await f('Another way to update avatar', client.updateUserById({ id: userId }, { avatar }));
 
 await f('Get information about owner of token', client.getMeInUsers({}));
 
