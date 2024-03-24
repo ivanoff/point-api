@@ -416,94 +416,94 @@ export class ApiClient {
         return this.delete<NewsResponseType>(`/news/${params.id}`);
     }
 
-    async addKeyPointsInTopics(body: KeyPointsPostBodyType): Promise<KeyPointsResponseType> {
-        return this.post<KeyPointsResponseType>('/topics/key_points', body);
+    async addKeyPointsInLeaves(body: KeyPointsPostBodyType): Promise<KeyPointsResponseType> {
+        return this.post<KeyPointsResponseType>('/leaves/key_points', body);
     }
 
-    async getKeyPointsInTopics(
+    async getKeyPointsInLeaves(
         query: KeyPointsQueryType
     ): Promise<ResultType<KeyPointsResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<KeyPointsResponseType>>(
-            queryString ? `/topics/key_points?${queryString}` : '/topics/key_points'
+            queryString ? `/leaves/key_points?${queryString}` : '/leaves/key_points'
         );
     }
 
-    async getKeyPointsByIdInTopics(
-        params: TopicsParamsType
+    async getKeyPointsByIdInLeaves(
+        params: LeavesParamsType
     ): Promise<ResultType<KeyPointsResponseType>> {
-        return this.get<ResultType<KeyPointsResponseType>>(`/topics/keyPoints/${params.id}`);
+        return this.get<ResultType<KeyPointsResponseType>>(`/leaves/keyPoints/${params.id}`);
     }
 
-    async updateKeyPointsByIdInTopics(
-        params: TopicsParamsType,
+    async updateKeyPointsByIdInLeaves(
+        params: LeavesParamsType,
         body: KeyPointsBodyType
     ): Promise<KeyPointsResponseType> {
-        return this.put<KeyPointsResponseType>(`/topics/keyPoints/${params.id}`, body);
+        return this.put<KeyPointsResponseType>(`/leaves/keyPoints/${params.id}`, body);
     }
 
-    async deleteKeyPointsByIdInTopics(params: TopicsParamsType): Promise<KeyPointsResponseType> {
-        return this.delete<KeyPointsResponseType>(`/topics/keyPoints/${params.id}`);
+    async deleteKeyPointsByIdInLeaves(params: LeavesParamsType): Promise<KeyPointsResponseType> {
+        return this.delete<KeyPointsResponseType>(`/leaves/keyPoints/${params.id}`);
     }
 
-    async addUserStatusesInTopics(
+    async addUserStatusesInLeaves(
         body: UserStatusesPostBodyType
     ): Promise<UserStatusesResponseType> {
-        return this.post<UserStatusesResponseType>('/topics/user_statuses', body);
+        return this.post<UserStatusesResponseType>('/leaves/user_statuses', body);
     }
 
-    async getUserStatusesInTopics(
+    async getUserStatusesInLeaves(
         query: UserStatusesQueryType
     ): Promise<ResultType<UserStatusesResponseType>> {
         const queryString = this.handleQueryString(query);
         return this.get<ResultType<UserStatusesResponseType>>(
-            queryString ? `/topics/user_statuses?${queryString}` : '/topics/user_statuses'
+            queryString ? `/leaves/user_statuses?${queryString}` : '/leaves/user_statuses'
         );
     }
 
-    async getUserStatusesByIdInTopics(
-        params: TopicsParamsType
+    async getUserStatusesByIdInLeaves(
+        params: LeavesParamsType
     ): Promise<ResultType<UserStatusesResponseType>> {
-        return this.get<ResultType<UserStatusesResponseType>>(`/topics/userStatuses/${params.id}`);
+        return this.get<ResultType<UserStatusesResponseType>>(`/leaves/userStatuses/${params.id}`);
     }
 
-    async updateUserStatusesByIdInTopics(
-        params: TopicsParamsType,
+    async updateUserStatusesByIdInLeaves(
+        params: LeavesParamsType,
         body: UserStatusesBodyType
     ): Promise<UserStatusesResponseType> {
-        return this.put<UserStatusesResponseType>(`/topics/userStatuses/${params.id}`, body);
+        return this.put<UserStatusesResponseType>(`/leaves/userStatuses/${params.id}`, body);
     }
 
-    async deleteUserStatusesByIdInTopics(
-        params: TopicsParamsType
+    async deleteUserStatusesByIdInLeaves(
+        params: LeavesParamsType
     ): Promise<UserStatusesResponseType> {
-        return this.delete<UserStatusesResponseType>(`/topics/userStatuses/${params.id}`);
+        return this.delete<UserStatusesResponseType>(`/leaves/userStatuses/${params.id}`);
     }
 
-    async addTopic(body: TopicsPostBodyType): Promise<TopicsResponseType> {
-        return this.post<TopicsResponseType>('/topics', body);
+    async addLeave(body: LeavesPostBodyType): Promise<LeavesResponseType> {
+        return this.post<LeavesResponseType>('/leaves', body);
     }
 
-    async updateTopicById(
-        params: TopicsParamsType,
-        body: TopicsBodyType
-    ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/topics/${params.id}`, body);
+    async updateLeaveById(
+        params: LeavesParamsType,
+        body: LeavesBodyType
+    ): Promise<LeavesResponseType> {
+        return this.put<LeavesResponseType>(`/leaves/${params.id}`, body);
     }
 
-    async getTopics(query: TopicsQueryType): Promise<ResultType<TopicsResponseType>> {
+    async getLeaves(query: LeavesQueryType): Promise<ResultType<LeavesResponseType>> {
         const queryString = this.handleQueryString(query);
-        return this.get<ResultType<TopicsResponseType>>(
-            queryString ? `/topics?${queryString}` : '/topics'
+        return this.get<ResultType<LeavesResponseType>>(
+            queryString ? `/leaves?${queryString}` : '/leaves'
         );
     }
 
-    async getTopicsById(params: TopicsParamsType): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/topics/${params.id}`);
+    async getLeavesById(params: LeavesParamsType): Promise<ResultType<LeavesResponseType>> {
+        return this.get<ResultType<LeavesResponseType>>(`/leaves/${params.id}`);
     }
 
-    async deleteTopicById(params: TopicsParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/topics/${params.id}`);
+    async deleteLeaveById(params: LeavesParamsType): Promise<LeavesResponseType> {
+        return this.delete<LeavesResponseType>(`/leaves/${params.id}`);
     }
 
     async addTeachersInCourses(body: TeachersPostBodyType): Promise<TeachersResponseType> {
@@ -536,32 +536,32 @@ export class ApiClient {
         return this.delete<TeachersResponseType>(`/courses/teachers/${params.id}`);
     }
 
-    async addTopicsInCourses(body: TopicsPostBodyType): Promise<TopicsResponseType> {
-        return this.post<TopicsResponseType>('/courses/topics', body);
+    async addLeavesInCourses(body: LeavesPostBodyType): Promise<LeavesResponseType> {
+        return this.post<LeavesResponseType>('/courses/leaves', body);
     }
 
-    async getTopicsInCourses(query: TopicsQueryType): Promise<ResultType<TopicsResponseType>> {
+    async getLeavesInCourses(query: LeavesQueryType): Promise<ResultType<LeavesResponseType>> {
         const queryString = this.handleQueryString(query);
-        return this.get<ResultType<TopicsResponseType>>(
-            queryString ? `/courses/topics?${queryString}` : '/courses/topics'
+        return this.get<ResultType<LeavesResponseType>>(
+            queryString ? `/courses/leaves?${queryString}` : '/courses/leaves'
         );
     }
 
-    async getTopicsByIdInCourses(
+    async getLeavesByIdInCourses(
         params: CoursesParamsType
-    ): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/courses/topics/${params.id}`);
+    ): Promise<ResultType<LeavesResponseType>> {
+        return this.get<ResultType<LeavesResponseType>>(`/courses/leaves/${params.id}`);
     }
 
-    async updateTopicsByIdInCourses(
+    async updateLeavesByIdInCourses(
         params: CoursesParamsType,
-        body: TopicsBodyType
-    ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/courses/topics/${params.id}`, body);
+        body: LeavesBodyType
+    ): Promise<LeavesResponseType> {
+        return this.put<LeavesResponseType>(`/courses/leaves/${params.id}`, body);
     }
 
-    async deleteTopicsByIdInCourses(params: CoursesParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/courses/topics/${params.id}`);
+    async deleteLeavesByIdInCourses(params: CoursesParamsType): Promise<LeavesResponseType> {
+        return this.delete<LeavesResponseType>(`/courses/leaves/${params.id}`);
     }
 
     async addCourse(body: CoursesPostBodyType): Promise<CoursesResponseType> {
@@ -766,30 +766,30 @@ export class ApiClient {
         return this.delete<SharesResponseType>(`/goals/shares/${params.id}`);
     }
 
-    async addTopicsInGoals(body: TopicsPostBodyType): Promise<TopicsResponseType> {
-        return this.post<TopicsResponseType>('/goals/topics', body);
+    async addLeavesInGoals(body: LeavesPostBodyType): Promise<LeavesResponseType> {
+        return this.post<LeavesResponseType>('/goals/leaves', body);
     }
 
-    async getTopicsInGoals(query: TopicsQueryType): Promise<ResultType<TopicsResponseType>> {
+    async getLeavesInGoals(query: LeavesQueryType): Promise<ResultType<LeavesResponseType>> {
         const queryString = this.handleQueryString(query);
-        return this.get<ResultType<TopicsResponseType>>(
-            queryString ? `/goals/topics?${queryString}` : '/goals/topics'
+        return this.get<ResultType<LeavesResponseType>>(
+            queryString ? `/goals/leaves?${queryString}` : '/goals/leaves'
         );
     }
 
-    async getTopicsByIdInGoals(params: GoalsParamsType): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/goals/topics/${params.id}`);
+    async getLeavesByIdInGoals(params: GoalsParamsType): Promise<ResultType<LeavesResponseType>> {
+        return this.get<ResultType<LeavesResponseType>>(`/goals/leaves/${params.id}`);
     }
 
-    async updateTopicsByIdInGoals(
+    async updateLeavesByIdInGoals(
         params: GoalsParamsType,
-        body: TopicsBodyType
-    ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/goals/topics/${params.id}`, body);
+        body: LeavesBodyType
+    ): Promise<LeavesResponseType> {
+        return this.put<LeavesResponseType>(`/goals/leaves/${params.id}`, body);
     }
 
-    async deleteTopicsByIdInGoals(params: GoalsParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/goals/topics/${params.id}`);
+    async deleteLeavesByIdInGoals(params: GoalsParamsType): Promise<LeavesResponseType> {
+        return this.delete<LeavesResponseType>(`/goals/leaves/${params.id}`);
     }
 
     async addGoal(body: GoalsPostBodyType): Promise<GoalsResponseType> {
@@ -815,32 +815,32 @@ export class ApiClient {
         return this.delete<GoalsResponseType>(`/goals/${params.id}`);
     }
 
-    async addTopicsInCategories(body: TopicsPostBodyType): Promise<TopicsResponseType> {
-        return this.post<TopicsResponseType>('/categories/topics', body);
+    async addLeavesInCategories(body: LeavesPostBodyType): Promise<LeavesResponseType> {
+        return this.post<LeavesResponseType>('/categories/leaves', body);
     }
 
-    async getTopicsInCategories(query: TopicsQueryType): Promise<ResultType<TopicsResponseType>> {
+    async getLeavesInCategories(query: LeavesQueryType): Promise<ResultType<LeavesResponseType>> {
         const queryString = this.handleQueryString(query);
-        return this.get<ResultType<TopicsResponseType>>(
-            queryString ? `/categories/topics?${queryString}` : '/categories/topics'
+        return this.get<ResultType<LeavesResponseType>>(
+            queryString ? `/categories/leaves?${queryString}` : '/categories/leaves'
         );
     }
 
-    async getTopicsByIdInCategories(
+    async getLeavesByIdInCategories(
         params: CategoriesParamsType
-    ): Promise<ResultType<TopicsResponseType>> {
-        return this.get<ResultType<TopicsResponseType>>(`/categories/topics/${params.id}`);
+    ): Promise<ResultType<LeavesResponseType>> {
+        return this.get<ResultType<LeavesResponseType>>(`/categories/leaves/${params.id}`);
     }
 
-    async updateTopicsByIdInCategories(
+    async updateLeavesByIdInCategories(
         params: CategoriesParamsType,
-        body: TopicsBodyType
-    ): Promise<TopicsResponseType> {
-        return this.put<TopicsResponseType>(`/categories/topics/${params.id}`, body);
+        body: LeavesBodyType
+    ): Promise<LeavesResponseType> {
+        return this.put<LeavesResponseType>(`/categories/leaves/${params.id}`, body);
     }
 
-    async deleteTopicsByIdInCategories(params: CategoriesParamsType): Promise<TopicsResponseType> {
-        return this.delete<TopicsResponseType>(`/categories/topics/${params.id}`);
+    async deleteLeavesByIdInCategories(params: CategoriesParamsType): Promise<LeavesResponseType> {
+        return this.delete<LeavesResponseType>(`/categories/leaves/${params.id}`);
     }
 
     async addCategorie(body: CategoriesPostBodyType): Promise<CategoriesResponseType> {
@@ -1428,14 +1428,14 @@ export type KeyPointsQueryType = {
     id?: number;
     timeCreated?: string;
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     question?: string;
     _null_timeCreated?: string;
     _not_null_timeCreated?: string;
     _null_userId?: string;
     _not_null_userId?: string;
-    _null_topicId?: string;
-    _not_null_topicId?: string;
+    _null_leafId?: string;
+    _not_null_leafId?: string;
     _null_question?: string;
     _not_null_question?: string;
     _from_id?: number;
@@ -1444,8 +1444,8 @@ export type KeyPointsQueryType = {
     _to_timeCreated?: string;
     _from_userId?: number;
     _to_userId?: number;
-    _from_topicId?: number;
-    _to_topicId?: number;
+    _from_leafId?: number;
+    _to_leafId?: number;
     _from_question?: string;
     _to_question?: string;
     _fields?: string;
@@ -1460,23 +1460,23 @@ export type KeyPointsQueryType = {
 
 export type KeyPointsResponseType = {
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     question?: string;
 };
 
 export type KeyPointsBodyType = {
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     question?: string;
 };
 
 export type KeyPointsPostBodyType = {
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     question?: string;
 };
 
-export type TopicsParamsType = {
+export type LeavesParamsType = {
     id?: string | number | boolean;
 };
 
@@ -1486,7 +1486,7 @@ export type UserStatusesQueryType = {
     timeStarted?: string;
     timeFinished?: string;
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     learnStatusId?: number;
     _null_timeCreated?: string;
     _not_null_timeCreated?: string;
@@ -1496,8 +1496,8 @@ export type UserStatusesQueryType = {
     _not_null_timeFinished?: string;
     _null_userId?: string;
     _not_null_userId?: string;
-    _null_topicId?: string;
-    _not_null_topicId?: string;
+    _null_leafId?: string;
+    _not_null_leafId?: string;
     _null_learnStatusId?: string;
     _not_null_learnStatusId?: string;
     _from_id?: number;
@@ -1510,8 +1510,8 @@ export type UserStatusesQueryType = {
     _to_timeFinished?: string;
     _from_userId?: number;
     _to_userId?: number;
-    _from_topicId?: number;
-    _to_topicId?: number;
+    _from_leafId?: number;
+    _to_leafId?: number;
     _from_learnStatusId?: number;
     _to_learnStatusId?: number;
     _fields?: string;
@@ -1527,7 +1527,7 @@ export type UserStatusesResponseType = {
     timeStarted?: string;
     timeFinished?: string;
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     learnStatusId?: number;
 };
 
@@ -1535,7 +1535,7 @@ export type UserStatusesBodyType = {
     timeStarted?: string;
     timeFinished?: string;
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     learnStatusId?: number;
 };
 
@@ -1543,24 +1543,24 @@ export type UserStatusesPostBodyType = {
     timeStarted?: string;
     timeFinished?: string;
     userId?: number;
-    topicId?: number;
+    leafId?: number;
     learnStatusId?: number;
 };
 
-export type TopicsQueryType = {
+export type LeavesQueryType = {
     id?: number;
     timeCreated?: string;
     userId?: number;
     categoryId?: number;
-    topicId?: number;
+    leafId?: number;
     _null_timeCreated?: string;
     _not_null_timeCreated?: string;
     _null_userId?: string;
     _not_null_userId?: string;
     _null_categoryId?: string;
     _not_null_categoryId?: string;
-    _null_topicId?: string;
-    _not_null_topicId?: string;
+    _null_leafId?: string;
+    _not_null_leafId?: string;
     _from_id?: number;
     _to_id?: number;
     _from_timeCreated?: string;
@@ -1569,8 +1569,8 @@ export type TopicsQueryType = {
     _to_userId?: number;
     _from_categoryId?: number;
     _to_categoryId?: number;
-    _from_topicId?: number;
-    _to_topicId?: number;
+    _from_leafId?: number;
+    _to_leafId?: number;
     _fields?: string;
     _sort?: string;
     _join?: string;
@@ -1580,7 +1580,7 @@ export type TopicsQueryType = {
     _lang?: string;
 };
 
-export type TopicsResponseType = {
+export type LeavesResponseType = {
     userId?: number;
     name?: string;
     description?: string;
@@ -1589,13 +1589,13 @@ export type TopicsResponseType = {
     slug?: string;
     timeToLearnMinutes?: number;
     courseId?: number;
-    topicId?: number;
+    leafId?: number;
     isPreRequirement?: boolean;
     goalId?: number;
     categoryId?: number;
 };
 
-export type TopicsBodyType = {
+export type LeavesBodyType = {
     userId?: number;
     name?: string;
     description?: string;
@@ -1604,13 +1604,13 @@ export type TopicsBodyType = {
     slug?: string;
     timeToLearnMinutes?: number;
     courseId?: number;
-    topicId?: number;
+    leafId?: number;
     isPreRequirement?: boolean;
     goalId?: number;
     categoryId?: number;
 };
 
-export type TopicsPostBodyType = {
+export type LeavesPostBodyType = {
     userId?: number;
     name?: string;
     description?: string;
@@ -1619,7 +1619,7 @@ export type TopicsPostBodyType = {
     slug?: string;
     timeToLearnMinutes?: number;
     courseId?: number;
-    topicId?: number;
+    leafId?: number;
     isPreRequirement?: boolean;
     goalId?: number;
     categoryId?: number;
